@@ -1,0 +1,13 @@
+/* 調整CKEditor輸入框的寬度和高度 */
+.ck-editor__editable {
+    min-height: 400px; /* 最小高度 */
+    /*width: 100%;  寬度設為100% 但不知為何加入vue或axios後會不完全跑掉*/
+}
+
+/* 如果您想要指定特定的寬度，您可以使用像素值，例如： */
+/*
+.ck-editor__editable {
+    min-height: 200px; 
+    width: 500px; 
+}
+*/

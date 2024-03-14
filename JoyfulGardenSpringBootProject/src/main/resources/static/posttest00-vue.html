@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor with Axios</title>
+    <!-- 引入 CKEditor 的 JavaScript 文件 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <!-- 引入 Axios 的 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 引入 Vue 的 JavaScript 文件 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.runtime.esm-browser.prod.js"></script>-->
+</head>
+
+<body>
+    
+    <div id="app">
+        <!-- CKEditor 的容器 -->
+        <div id="editor"></div>
+        <label for="sboardID">輸入子版id:</label>
+        <!-- 使用v-model进行双向绑定 -->
+        <input type="text" id="sboardID" name="sboardID" v-model="sboardID">
+        <!-- 提交按鈕 -->
+        <button @click="submitContent">提交</button>
+    </div>
+    
+
+    <script type="module">
+
+        // 創建 Vue 實例
+        import { createApp } from "https://www.unpkg.com/vue@3.3.5/dist/vue.esm-browser.prod.js"
+        const app = createApp({
+            data() {
+                return {
+                    sboardID: '' // 初始化 sboardID
+                };
+            },
+            methods: {
+                // 定義提交函數
+                submitContent() {
+                    if (window.editor) { // 確保編輯器已經初始化
+
+                        // 獲取 CKEditor 中的內容
+                        var content = window.editor.getData();
+
+                        // 創建要發送的 JSON 對象
+                        var post = {
+                            postContent: content,
+                            //sboardID: this.sboardID // 使用Vue中的sboardID(但已修改成動態到url中，故註解)
+                        };
+
+                        // 使用 Axios 發送 POST 請求
+                        axios.post('http://localhost:8085/forum/' + this.sboardID + '/posts/insert', post)
+                            .then(function (response) { // 處理成功響應
+                                console.log('post成功時=', post)
+                                console.log(response);
+                            })
+                            .catch(function (error) { // 處理錯誤
+                                console.log('post錯誤時=', post)
+                                console.error('error1=', error);
+                            });
+                    } else {
+                        console.error('編輯器未初始化');
+                    }
+                }
+            }
+        });
+
+        // 將 Vue 應用掛載到元素上
+        app.mount('#app');
+
+        // 初始化 CKEditor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: [
+                    'undo', 'redo', '|', 'heading', 'fontColor', '|',
+                    'bold', 'italic', 'link', 'imageUpload', 'numberedList', 'bulletedList'
+                ]
+            })
+            .then(editor => { // 打印已經初始化成功
+                console.log('Editor 初始化成功', editor);
+                window.editor = editor; // 將編輯器對象保存到全局變量中
+            })
+            .catch(error => {
+                console.error('error0=', error);
+            });
+    </script>
+</body>
+
+</html>

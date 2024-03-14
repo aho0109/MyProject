@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor with Axios</title>
+    <!-- 引入 CKEditor 的 JavaScript 文件 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-upload@36.0.1/src/index.min.js"></script> -->
+    <!-- 引入 Axios 的 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <!-- CKEditor 的容器 -->
+    <div id="editor"></div>
+    <div>
+        <label for="sboardID">輸入子版id:</label>
+        <input type="text" id="sboardID" name="sboardID">
+    </div>
+    <!-- 發表文章按鈕 -->
+    <button onclick="submitContent()">發表文章</button>
+
+    <script>
+        // 初始化 CKEditor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: [
+                    'undo', 'redo', '|', 'heading', 'fontColor', '|',
+                    'bold', 'italic', 'link', 'imageUpload', 'numberedList', 'bulletedList'
+                ]
+            })
+            .then(editor => {
+                // 打印已經初始化成功
+                console.log('Editor 初始化成功', editor);
+                window.editor = editor; // 將編輯器對象保存到全局變量中
+            })
+            .catch(error => {
+                console.error('error0=', error);
+            });
+
+        // 定義提交函數
+        function submitContent() {
+            if (window.editor) { // 確保編輯器已經初始化
+
+                // 獲取 CKEditor 中的內容
+                var content = window.editor.getData();
+                // 獲取 sboardID 的值
+                var sboardID = document.getElementById('sboardID').value;
+
+
+                // 創建要發送的 JSON 對象
+                var post = {
+                    postContent: content,
+                    sboardID: sboardID
+                };
+
+                // 使用 Axios 發送 POST 請求
+                axios.post('http://localhost:8085/forum/newposts', post)
+                    .then(function (response) {
+                        console.log('post成功時=', post)
+                        // 處理成功響應
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log('post錯誤時=', post)
+                        // 處理錯誤
+                        console.error('error1=', error);
+                    });
+            } else {
+                console.error('編輯器未初始化');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
