@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/postAndReplies.css">
+
+</head>
+
+<body>
+    <div id="app" class="container">
+        <div class="row justify-content-between">
+            <div class="col-auto">
+                <button class="custom-btn mt-3" @click="goToAllPostPage">回到文章列表</button>
+            </div>
+            <div class="col-auto">
+                <button class="custom-btn mt-3" @click="goToCreateReplyPage">發表回覆</button>
+            </div>
+        </div>
+
+        
+
+        <div v-if="post" class="post-container">
+            <!-- post區 -->
+            <div class="post-section">
+                <h2 style="font-weight: bold;font-size: 50px; float: left;">{{ post.postTitle }}</h2>
+                <div style="float: right;">
+                    <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
+                    <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                </div>
+                <div style="clear: both;"></div>
+                <!-- postContent -->
+                <div style="font-weight: bold;font-size: 30px; color: brown;" v-html="post.postContent"></div>
+                <!-- postcomments -->
+                <div class="comment-group">
+                    <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in postcomments" :key="comment.commentID">{{ comment.commentContent }}
+                        <button class="" @click="deletePostComment(comment.commentID)">刪除留言</button>
+                    </div> 
+                </div>
+                <!--對文章進行留言-->
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newPostCommentText[post.postID]" >
+                    <button class="custom-btn" @click="addPostComment(post.postID)">送出</button>
+                </div>
+            </div>
+        
+            <!-- replies區 -->
+            <div class="reply-section">
+                <div class="reply-group" v-for="reply in replies" :key="reply.replyID">
+                    <div style="font-weight: bold;font-size: 30px; color: brown; float: left;">{{ reply.replyTitle }}</div>
+                    <div style="float: right;">
+                        <button style="font-size: 15px;" class="" @click="deleteReply(reply.replyID)">刪除回覆</button>
+                        <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <!-- replyContent -->
+                    <div class="list-group-item" style="font-weight: bold;font-size: 30px; color: brown;" v-html="reply.replyContent"></div>
+                    <!-- replycomments -->
+                    <div class="comment-group">
+                        <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in reply.comments" :key="comment.commentID">{{ comment.commentContent }}
+                            <button class="" @click="deleteReplyComment(comment.commentID)">刪除留言</button>
+                        </div>
+                    </div>
+                    <!--對回覆進行留言-->
+                    <div class="input-group mt-2">
+                        <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newReplyCommentText[reply.replyID]" >
+                        <button class="custom-btn" @click="addReplyComment(reply.replyID)">送出</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.43/dist/vue.global.min.js"></script>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    post: [],
+                    postcomments: [],
+                    replies: [],
+                    //replycomments: [],
+                    newPostCommentText: {}, // 新增一個物件來儲存輸入框的值，以文章的ID作為鍵
+                    newReplyCommentText: {}, // 新增一個物件來儲存輸入框的值，以回覆的ID作為鍵
+                };
+            },
+            mounted() {
+                const postID = getUrlParameter("postID");
+                axios.get(`http://localhost:8085/forum/posts/${postID}`)
+                    .then(response01 => {
+                        this.post = response01.data;
+                        console.log("response01=", response01)
+                        this.postcomments = response01.data.comments;
+
+                    });
+                axios.get(`http://localhost:8085/forum/post=${postID}/replies`)
+                    .then(response02 => {
+                        this.replies = response02.data;
+                        console.log("response02=", response02)
+                        //this.replycomments = response02.data[0].comments;
+                    });
+            },
+            methods: {
+                goToAllPostPage() {
+                    window.location.href = "allPosts-google.html"; // 更改為你的發表文章頁面的URL
+                },
+                goToUpdatePostPage(postID) {
+                    window.location.href = `posttest-update00-vue-main.html?postID=${postID}`; // 更改為編輯文章頁面的URL
+                },
+                goToCreateReplyPage() {
+                    const postID = getUrlParameter("postID");
+                    window.location.href = `repliestest00-vue-main.html?postID=${postID}`;
+                },
+                goToUpdateReplyPage(replyID) {
+                    window.location.href = `repliestest-update00-vue-main.html?replyID=${replyID}`;
+                },
+                addPostComment(postID) {
+                    const commentContent = this.newPostCommentText[postID];
+                    // 在這裡處理新增留言的邏輯，你可以使用axios.post()將留言送到後端儲存
+                    console.log(`新增對文章${postID}的留言: ${commentContent}`);
+                    // 創建要發送到後端的評論對象
+                    const comment = {
+                        postID: postID, // 文章的ID
+                        commentContent: commentContent // 留言的內容
+                    };
+                    // 使用axios.post()方法將評論對象發送到後端的API端點
+                    axios.post('http://localhost:8085/forum/postandreply/comments', comment)
+                        .then(response => {// 評論成功添加後的處理
+                            console.log('對文章評論成功添加:', response.data);
+                            console.log('對文章評論成功添加:', comment);
+                            // 在這裡你可以更新前端的UI或者執行其他操作
+                            // 在前端評論列表中新增新評論
+                            this.postcomments.push(response.data);
+                            this.newPostCommentText[postID] = '';// 清空輸入框
+                        })
+                        .catch(error => {// 評論添加失敗後的處理
+                            console.error('對文章評論添加失敗:', error);
+                        });
+                },
+                addReplyComment(replyID) {
+                    const commentContent = this.newReplyCommentText[replyID];
+                    // 在這裡處理新增留言的邏輯，你可以使用axios.post()將留言送到後端儲存
+                    console.log(`新增對回覆${replyID}的留言: ${commentContent}`);
+                    // 創建要發送到後端的評論對象
+                    const comment = {
+                        replyID: replyID, // 回覆的ID
+                        commentContent: commentContent // 留言的內容
+                    };
+                    // 使用axios.post()方法將評論對象發送到後端的API端點
+                    axios.post('http://localhost:8085/forum/postandreply/comments', comment)
+                        .then(response => {// 評論成功添加後的處理
+                            console.log('對回覆評論成功添加:', response.data);
+                            console.log('對回覆評論成功添加:', comment);
+                            // 在這裡你可以更新前端的UI或者執行其他操作
+                            // 將新留言加入到相應的回覆中
+                            const newComment = {
+                                commentID: response.data.commentID, // 假設後端返回了新留言的ID
+                                commentContent: commentContent
+                            };
+                            const replyIndex = this.replies.findIndex(reply => reply.replyID === replyID);
+                            this.replies[replyIndex].comments.push(newComment);
+                            this.newReplyCommentText[replyID] = '';// 清空輸入框
+                        })
+                        .catch(error => {// 評論添加失敗後的處理
+                            console.error('對回覆評論添加失敗:', error);
+                        });
+                },
+                deletePost(postID) {
+                    console.log(`刪除文章 ${postID}`);
+                    // 使用 axios.delete() 方法發送 DELETE 請求到後端的 API 端點
+                    axios.delete(`http://localhost:8085/forum/posts/${postID}`)
+                        .then(response => { // 刪除文章成功後的處理
+                            console.log('刪除文章成功:', response.data);
+                            // 根據後端處理的結果，更新前端的 UI 或執行其他操作
+                            // 這裡可以從前端列表中刪除相應的文章
+                            this.post = null; // 清空目前的文章資料
+                            /*const index = this.post.findIndex(post => post.postID === postID);
+                            if (index !== -1) {
+                                this.post.splice(index, 1);
+                            }*/
+                        })
+                        .catch(error => {// 刪除文章失敗後的處理
+                            console.error('刪除文章失敗:', error);
+                        });
+                },
+                deleteReply(replyID) {// 在這裡處理刪除回覆的邏輯
+                    console.log(`刪除回覆 ${replyID}`);
+                    // 使用 axios.delete() 方法發送 DELETE 請求到後端的 API 端點
+                    axios.delete(`http://localhost:8085/forum/replies/${replyID}`)
+                        .then(response => { // 刪除回覆成功後的處理
+                            console.log('刪除回覆成功:', response.data);
+                            // 根據後端處理的結果，更新前端的 UI 或執行其他操作
+                            // 這裡可以從前端列表中刪除相應的回覆
+                            const index = this.replies.findIndex(reply => reply.replyID === replyID);
+                            if (index !== -1) {
+                                this.replies.splice(index, 1);
+                            }
+                        })
+                        .catch(error => {// 刪除回覆失敗後的處理
+                            console.error('刪除回覆失敗:', error);
+                        });
+                },
+                deletePostComment(commentID) {// 在這裡處理刪除評論的邏輯
+                    console.log(`刪除文章評論${commentID}的評論`);
+                    // 使用 axios.delete() 方法發送 DELETE 請求到後端的 API 端點
+                    axios.delete(`http://localhost:8085/forum/postandreply/comments/${commentID}`)
+                        .then(response => {// 刪除評論成功後的處理
+                            console.log('刪除文章評論成功:', response.data);
+                            // 根據後端處理的結果，更新前端的 UI 或執行其他操作
+                            // 這裡可以更新前端的評論列表，刪除相應的評論
+                            const index = this.postcomments.findIndex(comment => comment.commentID === commentID);
+                            if (index !== -1) {
+                                this.postcomments.splice(index, 1);
+                            }
+                        })
+                        .catch(error => {// 刪除評論失敗後的處理
+                            console.error('刪除文章評論失敗:', error);
+                        });
+                },
+                deleteReplyComment(commentID) {// 在這裡處理刪除評論的邏輯
+                    console.log(`刪除回覆評論${commentID}的評論`);
+                    // 使用 axios.delete() 方法發送 DELETE 請求到後端的 API 端點
+                    axios.delete(`http://localhost:8085/forum/postandreply/comments/${commentID}`)
+                        .then(response => { // 刪除評論成功後的處理
+                            console.log('刪除回覆評論成功:', response.data);
+                            // 根據後端處理的結果，更新前端的 UI 或執行其他操作
+                            // 這裡可以更新前端的評論列表，刪除相應的評論
+                            for (const reply of this.replies) {
+                                const index = this.reply.comments.findIndex(comment => comment.commentID === commentID); //v-for="comment in reply.comments" 
+                                if (index !== -1) {
+                                    this.reply.comments.splice(index, 1);
+                                }
+                            }
+                        })
+                        .catch(error => {// 刪除評論失敗後的處理
+                            console.error('刪除回覆評論失敗:', error);
+                        });
+                }
+            }
+        });
+
+        app.mount("#app");
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+    </script>
+</body>
+
+</html>

@@ -32,6 +32,7 @@ public class PostsService {
 		return poRepos.save(post);
 	}
 	
+	// 刪除
 	public void deleteById(Integer postID) {
 		poRepos.deleteById(postID);
 	}
@@ -49,6 +50,17 @@ public class PostsService {
 	//找全o
 	public List<Posts> findAllPosts() {
 		return poRepos.findAll();
+	}
+	
+	// 找by sboardID
+	public List<Posts> findAllPostsBySboardID(Integer sboardID) {
+		return poRepos.findBySboardID(sboardID);
+		
+	}
+	
+	// 關鍵字模糊搜尋
+	public List<Posts> findAllByKeywords(String keyword) {
+		return poRepos.findByKeywords(keyword);
 	}
 
 //	public List<Posts> findByMemberName(String memberName) {

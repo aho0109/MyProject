@@ -20,10 +20,10 @@ import jakarta.persistence.Table;
 
 @SuppressWarnings("deprecation")
 @Entity
-@Table(name = "SBoards")
+@Table(name = "Sboards")
 @SQLDelete(sql = "UPDATE product SET isDeleted = true WHERE id = ?") //@SQLDelete註解用來覆寫delete指令，每次我們執行delete指令時，我們會將其轉換成清單3.1.2中的UPDATE語句，這條指令將isDeleted欄位改為true，而不是永久刪除資料。
 @Where(clause = "isDeleted = false")
-public class SBoards {
+public class Sboards {
 	
 	@Id
 	@Column(name = "SBOARDID")
@@ -52,9 +52,9 @@ public class SBoards {
 	@JsonIgnore //但我不知道為何要加這行
 	@ManyToOne
 	@JoinColumn(name = "MBOARDID", insertable = false, updatable = false)
-	private MBoards mBoards;
+	private Mboards mboards;
 	
-	@OneToMany(mappedBy = "sBoards",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "sboards",cascade = CascadeType.ALL)
 	private List<Posts> posts;
 	
 
@@ -63,7 +63,7 @@ public class SBoards {
 	 * 多對一
 	 * 一對多*/
 	
-	public SBoards() {}
+	public Sboards() {}
 
 
 	public Integer getSboardID() {
@@ -90,8 +90,8 @@ public class SBoards {
 		return isDeleted;
 	}
 
-	public MBoards getmBoards() {
-		return mBoards;
+	public Mboards getMboards() {
+		return mboards;
 	}
 
 	public List<Posts> getPosts() {
@@ -122,8 +122,8 @@ public class SBoards {
 		this.isDeleted = isDeleted;
 	}
 
-	public void setmBoards(MBoards mBoards) {
-		this.mBoards = mBoards;
+	public void setMboards(Mboards mboards) {
+		this.mboards = mboards;
 	}
 
 	public void setPosts(List<Posts> posts) {

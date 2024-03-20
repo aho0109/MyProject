@@ -7,29 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.joyfulgarden.model.SBoards;
-import com.joyfulgarden.model.SBoardsRepository;
+import com.joyfulgarden.model.Sboards;
+import com.joyfulgarden.model.SboardsRepository;
 
 @Service
 @Transactional
-public class SBoardsService {
+public class SboardsService {
 
 	@Autowired
-	private SBoardsRepository sbRepos;
+	private SboardsRepository sbRepos;
 	
 	// 找全
-	public List<SBoards> findAllMBoards() {
+	public List<Sboards> findAllSBoards() {
 		return sbRepos.findAll();
 	}
 	
 	// 新增
-	public SBoards insert(SBoards sBoards) {
-		return sbRepos.save(sBoards);
+	public Sboards insert(Sboards sboards) {
+		return sbRepos.save(sboards);
 	}
 	
 	// 修改
-	public SBoards update(SBoards sBoards) {
-		return sbRepos.save(sBoards);
+	public Sboards update(Sboards sboards) {
+		return sbRepos.save(sboards);
 	}
 	
 	// 刪除
@@ -38,8 +38,8 @@ public class SBoardsService {
 	}
 	
 	
-	public SBoards findById(Integer sboardID) {
-		Optional<SBoards> optional = sbRepos.findById(sboardID);
+	public Sboards findById(Integer sboardID) {
+		Optional<Sboards> optional = sbRepos.findById(sboardID);
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

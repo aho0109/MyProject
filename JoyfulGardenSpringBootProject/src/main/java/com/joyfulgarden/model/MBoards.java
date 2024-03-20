@@ -16,10 +16,10 @@ import jakarta.persistence.Table;
 
 @SuppressWarnings("deprecation")
 @Entity
-@Table(name = "MBoards")
+@Table(name = "Mboards")
 @SQLDelete(sql = "UPDATE product SET isDeleted = true WHERE id = ?") //@SQLDelete註解用來覆寫delete指令，每次我們執行delete指令時，我們會將其轉換成清單3.1.2中的UPDATE語句，這條指令將isDeleted欄位改為true，而不是永久刪除資料。
 @Where(clause = "isDeleted = false")
-public class MBoards {
+public class Mboards {
 
 	@Id
 	@Column(name = "MBOARDID")
@@ -41,8 +41,8 @@ public class MBoards {
 	
 	/*一對多 多對一 多對多*/
 	
-	@OneToMany(mappedBy = "mBoards", cascade = CascadeType.ALL)
-	private List<SBoards> sboards;
+	@OneToMany(mappedBy = "mboards", cascade = CascadeType.ALL)
+	private List<Sboards> sboards;
 	
 	
 	/*建構子
@@ -50,7 +50,7 @@ public class MBoards {
 	 * 多對一
 	 * 一對多*/
 	
-	public MBoards() {}
+	public Mboards() {}
 
 
 	public Integer getMboardID() {
@@ -73,7 +73,7 @@ public class MBoards {
 		return isDeleted;
 	}
 
-	public List<SBoards> getSboards() {
+	public List<Sboards> getSboards() {
 		return sboards;
 	}
 
@@ -97,7 +97,7 @@ public class MBoards {
 		this.isDeleted = isDeleted;
 	}
 
-	public void setSboards(List<SBoards> sboards) {
+	public void setSboards(List<Sboards> sboards) {
 		this.sboards = sboards;
 	}
 

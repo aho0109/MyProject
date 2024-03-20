@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div v-if="post">
+            
+            
+        <h2 style="font-weight: bold;font-size: 50px;">{{ post.postTitle }}</h2>
+        <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
+        <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+        <!-- 使用 v-html 指令將 postContent 視為 HTML 解析並顯示 -->
+        <div style="font-weight: bold;font-size: 30px; color: brown;" v-html="post.postContent"></div>
+            
+            <!-- 迴圈顯示每個文章的留言-->
+            <div class="comment-group">
+                <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in postcomments" :key="comment.commentID">{{ comment.commentContent }}
+                    <button class="" @click="deletePostComment(comment.commentID)">刪除留言</button>
+                </div> 
+            </div>
+            <!--對文章進行留言-->
+            <div class="input-group mt-2">
+                <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newPostCommentText[post.postID]" >
+                <button class="custom-btn" @click="addPostComment(post.postID)">送出</button>
+            </div>
+
+
+        <div class="reply-group">
+            <div style="font-weight: bold;font-size: 30px; color: brown;" class="list-group-item" v-for="reply in replies":key="reply.replyID"><!--{{ reply.replyContent }}-->
+                <div v-html="reply.replyContent"></div>
+                <button style="font-size: 15px;" class="" @click="deleteReply(reply.replyID)">刪除回覆</button>
+                <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
+
+                <!-- 迴圈顯示每個回覆的留言 -->
+                <div class="comment-group">
+                    <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in reply.comments" :key="comment.commentID">{{ comment.commentContent }}
+                        <button class="" @click="deleteReplyComment(comment.commentID)">刪除留言</button>
+                    </div>
+                </div>
+                <!--對回覆進行留言-->
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newReplyCommentText[reply.replyID]" >
+                    <button class="custom-btn" @click="addReplyComment(reply.replyID)">送出</button>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    
+</body>
+</html>

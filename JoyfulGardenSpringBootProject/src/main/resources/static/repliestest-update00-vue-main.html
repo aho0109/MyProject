@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更新回覆</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ckeditorUtil.css">
+
+
+</head>
+
+<body>
+
+    <div id="appCK" class="containerCK">
+
+        <!-- CKEditor 的容器 -->
+        <div id="editor"></div>
+
+        <!-- 提交按鈕 -->
+        <button @click="submitContent">更新回覆</button>
+
+
+    </div>
+
+
+    <script type="module">
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // 創建 Vue 實例
+        import { createApp } from "https://www.unpkg.com/vue@3.3.5/dist/vue.esm-browser.prod.js"
+        const appCK = createApp({
+            data() {
+                return {
+                    postID: '',
+                    replyID: ''
+                };
+            },
+            mounted() {
+                // 從URL中獲取回覆ID
+                const urlParams = new URLSearchParams(window.location.search);
+                const replyID = urlParams.get('replyID');
+                if (replyID) {
+                    this.replyID = replyID; // 將回覆ID保存到Vue實例中
+                    this.loadReplyContent(replyID); // 載入回覆內容
+                }
+            },
+            methods: {
+                loadReplyContent(replyID) {
+                    axios.get(`http://localhost:8085/forum/replies/${replyID}`) // 根據回覆ID發送 GET 請求
+                        .then(response => {
+                            // 將返回的回覆內容填入到相應的欄位中
+                            this.postID = response.data.postID
+                            window.editor.setData(response.data.replyContent);
+                        })
+                        .catch(error => {
+                            console.error('無法載入回覆內容:', error);
+                        });
+                },
+                // 定義提交函數
+                submitContent() {
+                    if (window.editor) { // 確保編輯器已經初始化
+
+                        // 獲取 CKEditor 中的內容
+                        var content = window.editor.getData();
+
+                        // 創建要發送的 JSON 對象
+                        var ureply = {
+                            replyContent: content,
+                            postID: this.postID // 使用Vue中的postID(若改成動態到url中，需變註解)
+                        };
+
+                        // 使用 Axios 發送 PUT 請求
+                        axios.put(`http://localhost:8085/forum/post=${this.postID}/replies/${this.replyID}`, ureply)
+                            //axios.post('http://localhost:8085/forum/posts', reply)
+                            .then( response => { // 處理成功響應
+                                console.log('post成功時=', ureply)
+                                console.log(response);
+                                window.location.href = 'postAndReplies-google.html?postID=' + this.postID; // 導向到所屬文章
+                            })
+                            .catch( error => { // 處理錯誤
+                                console.log('post錯誤時=', ureply)
+                                console.error('error1=', error);
+                            });
+                    } else {
+                        console.error('編輯器未初始化');
+                    }
+                }
+            }
+        });
+
+        // 將 Vue 應用掛載到元素上
+        appCK.mount('#appCK');
+
+        // 初始化 CKEditor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: [
+                    'undo', 'redo', '|', 'heading', 'fontColor', '|',
+                    'bold', 'italic', 'link', 'imageUpload', 'numberedList', 'bulletedList'
+                ]
+            })
+            .then(editor => { // 打印已經初始化成功
+                console.log('Editor 初始化成功', editor);
+                window.editor = editor; // 將編輯器對象保存到全局變量中
+            })
+            .catch(error => {
+                console.error('error0=', error);
+            });
+    </script>
+</body>
+
+</html>

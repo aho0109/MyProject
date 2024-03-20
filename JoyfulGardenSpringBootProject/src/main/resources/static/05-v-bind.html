@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title> 
+</head>
+<body>
+    <div id="app">
+        <div><a v-bind:href="link" v-bind:title="website">連結1</a></div>
+        <div><a :href="'https://www.'+website+'.com'" :title="website">連結2</a></div>
+        <br>
+        <div><button type="button" :disabled="isDisabled">Clcik</button></div>
+        <br>
+        <div :style="{'width':'90px', 'height':'90px', 'background-color':'gray'}"></div>
+        <br>
+        <div :style="styleObj"></div>
+        <br>
+        <div v-bind="{id: 'xyz', style: styleObj}">v-bind object</div>
+        <br>
+        <div :class="['error1', 'error2']">v-bind:class array</div>
+        <br>
+        <div v-bind:[attrname1]="attrvalue1" :[attrname2]="attrvalue2">動態屬性名稱</div>
+        <br>
+        <!-- <div v-bind:['foo' + bar]="data">非法：動態屬性名稱</div> -->
+    </div>
+    <script type="module">
+        import { createApp } from "https://www.unpkg.com/vue@3.3.5/dist/vue.esm-browser.prod.js"
+        const app = createApp({
+            data: function() {
+                return {
+                    website: "google",
+                    link: "https://www.google.com",
+                    isDisabled: false,
+                    styleObj: {
+                        "width": "90px",
+                        "height": "90px",
+                        "background-color": "red"
+                    },
+                    attrname1: "id",
+                    attrvalue1: "data1",
+                    attrname2: "attr",
+                    attrvalue2: "attribute-value",
+                }
+            },
+        })
+        app.mount("#app")
+    </script>
+    <style>
+        .error1 {
+            color: red;
+        }
+        .error2 {
+            font-size: 24px;
+        }
+    </style>
+</body>
+</html>

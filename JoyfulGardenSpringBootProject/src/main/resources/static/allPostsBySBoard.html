@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <h1>All Posts</h1>
+        <ul>
+            <li v-for="post in posts" @click="showPost(post.postID)">{{ post.postTitle }}</li>
+        </ul>
+
+        <div v-if="selectedPost">
+            <h2>{{ selectedPost.postTitle }}</h2>
+            <p>{{ selectedPost.postContent }}</p>
+            <h3>Replies:</h3>
+            <ul>
+                <li v-for="reply in replies">{{ reply.replyContent }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+
+        import { createApp } from "https://www.unpkg.com/vue@3.3.5/dist/vue.esm-browser.prod.js"
+        const app = createApp({
+            data() {
+                return {
+                    posts: [],
+                    selectedPost: null,
+                    replies: []
+                };
+            },
+            mounted() {
+                this.displayPosts();
+            },
+            methods: {
+                fetchPosts() {
+                    return axios.get('http://localhost:8085/forum/posts')
+                        .then(response => response.data)
+                        .catch(error => console.error('Error fetching posts:', error));
+                },
+                fetchReplies(postID) {
+                    return axios.get(`http://localhost:8085/forum/post=${postID}/replies`)
+                        .then(response => response.data)
+                        .catch(error => console.error('Error fetching replies:', error));
+                },
+                showPost(postID) {
+                    this.fetchPosts()
+                        .then(posts => {
+                            const post = posts.find(post => post.postID === postID);
+                            this.selectedPost = post;
+                            return this.fetchReplies(postID);
+                        })
+                        .then(replies => {
+                            this.replies = replies;
+                        })
+                        .catch(error => console.error('Error displaying post:', error));
+                },
+                displayPosts() {
+                    this.fetchPosts()
+                        .then(posts => {
+                            this.posts = posts;
+                        })
+                        .catch(error => console.error('Error displaying posts:', error));
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

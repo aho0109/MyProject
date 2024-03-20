@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/allPosts.css">
+
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1>花壇</h1>
+        <button class="custom-btn mt-3" @click="goToCreatePostPage">發表文章</button>
+        <div class="input-group mt-3">
+            <input type="text" class="form-control" placeholder="輸入搜尋內容" v-model="keyword">
+            <!--<select class="form-select" v-model="selectedSboard">
+                <option value="">所有分類</option>
+                <option value="1">初階課程</option>
+                <option value="2">進階課程</option>
+                <option value="3">花束</option>
+                <option value="4">手工皂</option>
+                <option value="5">個人宣傳</option>
+                <option value="6">廠商宣傳</option>
+                <option value="7">栽種相關</option>
+                <option value="8">工具相關</option>
+            </select>-->
+            <button class="btn btn-outline-secondary" type="button" @click="doSearchPosts">搜尋</button>
+        </div>
+        <div>
+            <button class="custom-btn mt-3" @click="goToAllPosts">所有文章</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(1)">初階課程</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(2)">進階課程</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(3)">花束</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(4)">手工皂</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(5)">個人宣傳</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(6)">廠商宣傳</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(7)">栽種相關</button>
+            <button class="custom-btn mt-3" @click="filterPostsBySboard(8)">工具相關</button>
+        </div>
+
+
+        <!--    
+        <ul class="list-group">
+            <li class="list-group-item" v-for="post in posts" :key="post.postID">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <a v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle }}</a>
+                    <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
+                    <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                </div>
+            </li>
+        </ul>
+-->
+        <table class="table">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col">預覽</th>
+                    <th scope="col">標題</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <tr v-for="post in posts" :key="post.postID">
+                    <td>
+                        <div>
+                            <div v-html="content"></div>
+                            <img v-if="imageData" :src="imageData" alt="圖片">
+                            <img v-else src="photo/gelogo.jpg" alt="預設圖片">
+                            <img src="photo/gelogo.jpg" alt="圖片" style="width: 50px; height: 50px;">
+                        </div>
+                    </td>
+                    <td>
+                        
+                        <div>
+                            <a style="font-size: 25px; text-decoration: none;"
+                                v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle
+                                }}</a>
+                        </div>
+                        <div>
+                            <span v-html="shortenContent(post.postContent)"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div v-if="loginStaus != null">
+                            <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
+                            <button style="font-size: 15px;" class=""
+                                @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                        </div>
+                        <div v-if="loginStaus == null">
+                            <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">AAAAAAA刪除文章</button>
+                            <button style="font-size: 15px;" class=""
+                                @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.43/dist/vue.global.min.js"></script>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    posts: [],
+                    keyword: '',
+                    selectedSboard: '',
+                    loginStaus: '你好',
+                };
+            },
+            mounted() {
+                axios.get("http://localhost:8085/forum/posts")
+                    .then(response => {
+                        this.posts = response.data;
+                        console.log(response)
+                    });
+            },
+            methods: {
+                goToAllPosts() {
+                    window.location.href = "allPosts-google.html"
+                },
+                shortenContent(shortcont) {
+                    // 移除 <p> 標籤
+                    let plainText = shortcont.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+                    // 截斷內容
+                    if (plainText.length > 50) {
+                        return plainText.substring(0, 50) + '...';
+                    } else {
+                        return plainText + '...';
+                    }
+                },
+                filterPostsBySboard(sboardID) {
+                    axios.get(`http://localhost:8085/forum/sboard=${sboardID}/posts`)
+                        .then(response => {
+                            this.posts = response.data;
+                            console.log(response)
+                        });
+                },
+                doSearchPosts() {
+                    axios.get(`http://localhost:8085/forum/search/${this.keyword}`)
+                        .then(response => {
+                            this.posts = response.data;
+                            console.log(response)
+                        });
+                },
+                goToCreatePostPage() {
+                    window.location.href = "posttest00-vue-main.html"; // 更改為你的發表文章頁面的URL
+                },
+                goToUpdatePostPage(postID) {
+                    window.location.href = `posttest-update00-vue-main.html?postID=${postID}`; // 更改為編輯文章頁面的URL
+                },
+                deletePost(postID) {
+                    console.log(`刪除文章 ${postID}`);
+                    // 使用 axios.delete() 方法發送 DELETE 請求到後端的 API 端點
+                    axios.delete(`http://localhost:8085/forum/posts/${postID}`)
+                        .then(response => { // 刪除回覆成功後的處理
+                            console.log('刪除回覆成功:', response.data);
+                            // 根據後端處理的結果，更新前端的 UI 或執行其他操作
+                            // 這裡可以從前端列表中刪除相應的回覆
+                            const index = this.posts.findIndex(post => post.postID === postID);
+                            if (index !== -1) {
+                                this.posts.splice(index, 1);
+                            }
+                        })
+                        .catch(error => {// 刪除回覆失敗後的處理
+                            console.error('刪除回覆失敗:', error);
+                        });
+                }
+
+
+            }
+        });
+
+        app.mount("#app");
+    </script>
+</body>
+
+</html>
