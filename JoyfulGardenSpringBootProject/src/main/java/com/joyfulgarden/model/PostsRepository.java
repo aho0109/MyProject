@@ -24,18 +24,21 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	
 	 
 	// 關鍵字模糊搜尋
+	// 但目前bug:文章刪了但 回覆沒刪或留言沒刪 找的時候還是會跑出來 點進去就消失
 	@Query(value = "SELECT p.postID AS postID, p.postTitle AS postTitle, p.postContent AS postContent, " +
             "p.authorID AS authorID, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
             "p.postTime AS postTime, p.isDeleted AS isDeleted " +
             "FROM Posts p LEFT JOIN Replies r ON p.postID = r.postID " +
-            "WHERE p.postTitle LIKE %:keyword% OR " +
+            "WHERE (p.postTitle LIKE %:keyword% OR " +
             "p.postContent LIKE %:keyword% OR " +
             "r.replyContent LIKE %:keyword% OR " +
-            "r.replyContent LIKE %:keyword%", nativeQuery = true)
+            "r.replyContent LIKE %:keyword%) " +
+            "AND p.isDeleted = 0 " +
+            "AND (r.isDeleted = 0 OR r.isDeleted IS NULL)", nativeQuery = true)
 	List<Posts> findByKeywords(@Param("keyword") String keyword);
 	
 	
-	
+	// 沒用到
 	@Query(value = "SELECT p.postID AS postID, p.postTitle AS postTitle, p.postContent AS postContent, " +
             "p.authorID AS authorID, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
             "p.postTime AS postTime, p.isDeleted AS isDeleted " +

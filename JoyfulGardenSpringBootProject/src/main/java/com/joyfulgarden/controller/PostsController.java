@@ -1,5 +1,6 @@
 package com.joyfulgarden.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ public class PostsController {
 		return postsService.findAllPosts();
 	}
 	
+	
+	
 	// 關鍵字模糊搜尋
 	@GetMapping("/forum/search/{keyword}")
 	public List<Posts> doKeywordSearch(@PathVariable String keyword) {
@@ -60,12 +63,12 @@ public class PostsController {
 		Posts npost = new Posts();
 		npost.setPostTitle(post.getPostTitle());
 		npost.setPostContent(post.getPostContent());
-		//post.setMembers(members);
+		//npost.setForummembers(post.getForummembers());
 		npost.setAuthorID(post.getAuthorID());
 		npost.setSboardID(post.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		//npost.setSboardID(sboardID);
 		npost.setLikesCount(post.getLikesCount());
-		npost.setPostTime(post.getPostTime());
+		npost.setPostTime(LocalDateTime.now());
 		npost.setDeleted(false);
 		postsService.insert(npost);
 		return npost;

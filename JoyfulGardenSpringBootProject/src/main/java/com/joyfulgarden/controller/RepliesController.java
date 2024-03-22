@@ -1,5 +1,6 @@
 package com.joyfulgarden.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +50,11 @@ public class RepliesController {
 									@RequestBody Replies reply) {
 		Replies nreplies = new Replies();
 		nreplies.setReplyContent(reply.getReplyContent());
-		//post.setMembers(members);
 		nreplies.setAuthorID(reply.getAuthorID());
 		//nreplies.setSboardID(replies.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		nreplies.setPostID(postID);
 		nreplies.setLikesCount(reply.getLikesCount());
-		nreplies.setReplyTime(reply.getReplyTime());
+		nreplies.setReplyTime(LocalDateTime.now());
 		nreplies.setDeleted(false);
 		repliesService.insert(nreplies);
 		return nreplies;
@@ -72,7 +72,7 @@ public class RepliesController {
 		ureplies.setAuthorID(reply.getAuthorID());
 		//upost.setSboards(replies.getSboards());// 有fk所以不能輸入不存在之sboardID
 		ureplies.setLikesCount(reply.getLikesCount());
-		ureplies.setReplyTime(reply.getReplyTime());
+		//ureplies.setReplyTime(reply.getReplyTime());
 		//npost.setDeleted(true);
 		repliesService.update(ureplies);
 		return ureplies;		

@@ -1,5 +1,7 @@
 package com.joyfulgarden.controller;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +36,15 @@ public class SBoardsController {
 	}
 	
 	// 新增
+	@SuppressWarnings("deprecation")
 	@PostMapping("/forum/sboards")
-	public Sboards doInsertSBoards(@PathVariable(name ="mboardID") Integer mboardID, @RequestBody Sboards sboards) {
+	public Sboards doInsertSBoards(/*@PathVariable(name ="mboardID") Integer mboardID,*/ @RequestBody Sboards sboards) {
 		Sboards nsBoards = new Sboards();
 		nsBoards.setSboardTitle(sboards.getSboardTitle());
 		nsBoards.setSbulletin(sboards.getSbulletin());
-		nsBoards.setMboardID(mboardID);
-		nsBoards.setCreateTime(sboards.getCreateTime());
+		//nsBoards.setMboardID(mboardID);
+		nsBoards.setMboardID(sboards.getMboardID());
+		nsBoards.setCreateTime(LocalDateTime.now());
 		nsBoards.setDeleted(false);
 		sboardsService.insert(nsBoards);
 		return nsBoards;

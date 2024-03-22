@@ -69,7 +69,8 @@
             data() {
                 return {
                     sboardID: '', // 初始化 sboardID
-                    postTitle: ''
+                    postTitle: '',
+                    //authorID: '',
                 };
             },
             methods: {
@@ -84,7 +85,8 @@
                         var post = {
                             postTitle: this.postTitle,
                             postContent: content,
-                            sboardID: this.sboardID // 使用Vue中的sboardID(若改成動態到url中，需變註解)
+                            sboardID: this.sboardID, // 使用Vue中的sboardID(若改成動態到url中，需變註解)
+                            authorID: 1
                         };
 
                         // 使用 Axios 發送 POST 請求

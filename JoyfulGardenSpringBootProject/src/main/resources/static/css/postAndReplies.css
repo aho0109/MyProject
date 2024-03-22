@@ -44,17 +44,29 @@ body {
 
 /* 在reply之間添加空隙 */
 .reply-group {
-    background-color: whitesmoke;
+    background-color: rgb(221, 221, 221);
     margin-bottom: 20px; /* 調整底部間距 */
 }
 
+.post-time-divider {
+    border-bottom: 1px solid rgb(185, 185, 185); /* 添加細灰線 */
+    clear: both;
+}
+.reply-time-divider {
+    border-bottom: 1px solid rgb(185, 185, 185); /* 添加細灰線 */
+    clear: both;
+}
+
+.list-group-item {
+    /*border-bottom: 1px solid rgb(185, 185, 185); /* 添加細灰線 */
+}
 
 /* 修改post的comment部分的背景色 */
-.post-section .comment-group .list-group-item {
-    background-color: #B5BAC0; /* 您想要的背景色 */
+.post-section .comment-group /*.list-group-item*/ {
+    background-color: #c9cacc; /* 您想要的背景色 */
 }
 
 /* 修改reply的comment部分的背景色 */
-.reply-group .comment-group .list-group-item {
-    background-color: #B5BAC0; /* 您想要的背景色 */
+.reply-group .comment-group /*.list-group-item*/ {
+    background-color: #c9cacc; /* 您想要的背景色 */
 }

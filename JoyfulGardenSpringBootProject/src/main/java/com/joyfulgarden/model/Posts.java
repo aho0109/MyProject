@@ -1,5 +1,6 @@
 package com.joyfulgarden.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
@@ -48,17 +49,17 @@ public class Posts {
 	private Integer likesCount;
 	
 	@Column(name = "POSTTIME")
-	private String postTime;
+	private LocalDateTime postTime;
 
 	@Column(name = "ISDELETED")
 	private boolean isDeleted = Boolean.FALSE;
 	
 	
-//	//@JsonIgnoreProperties({ "" })
-//	@JsonIgnore //但我不知道為何要加這行
-//	@ManyToOne
-//	@JoinColumn(name = "AUTHORID", referencedColumnName = "MEMBERID")
-//	private Members members;
+	//@JsonIgnoreProperties({ "" })
+	@JsonIgnore //但我不知道為何要加這行
+	@ManyToOne
+	@JoinColumn(name = "AUTHORID", referencedColumnName = "FORUMMEMBERID" , insertable = false, updatable = false)
+	private Forummembers forummembers;
 
 	
 	//@JsonIgnoreProperties({ "" })
@@ -80,11 +81,9 @@ public class Posts {
 	
 	public Posts() {}
 	
-	
-
 	public Posts(Integer postID, String postTitle, String postContent, Integer authorID, Integer sboardID,
-			Integer likesCount, String postTime, boolean isDeleted, Sboards sboards, List<Replies> replies,
-			List<Comments> comments) {
+			Integer likesCount, LocalDateTime postTime, boolean isDeleted, Forummembers forummembers, Sboards sboards,
+			List<Replies> replies, List<Comments> comments) {
 		super();
 		this.postID = postID;
 		this.postTitle = postTitle;
@@ -94,11 +93,11 @@ public class Posts {
 		this.likesCount = likesCount;
 		this.postTime = postTime;
 		this.isDeleted = isDeleted;
+		this.forummembers = forummembers;
 		this.sboards = sboards;
 		this.replies = replies;
 		this.comments = comments;
 	}
-
 
 
 	public Integer getPostID() {
@@ -127,7 +126,7 @@ public class Posts {
 		return likesCount;
 	}
 
-	public String getPostTime() {
+	public LocalDateTime getPostTime() {
 		return postTime;
 	}
 
@@ -171,7 +170,7 @@ public class Posts {
 		this.likesCount = likesCount;
 	}
 
-	public void setPostTime(String postTime) {
+	public void setPostTime(LocalDateTime postTime) {
 		this.postTime = postTime;
 	}
 
@@ -190,6 +189,17 @@ public class Posts {
 	public void setComments(List<Comments> comments) {
 		this.comments = comments;
 	}
+
+
+
+	public Forummembers getForummembers() {
+		return forummembers;
+	}
+
+	public void setForummembers(Forummembers forummembers) {
+		this.forummembers = forummembers;
+	}
+	
 	
 	
 	

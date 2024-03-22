@@ -28,23 +28,26 @@
         <div v-if="post" class="post-container">
             <!-- post區 -->
             <div class="post-section">
-                <h2 style="font-weight: bold;font-size: 50px; float: left;">{{ post.postTitle }}</h2>
+                <h2 style="font-weight: bold; font-size: 50px; float: left;">{{ post.postTitle }}</h2>
                 <div style="float: right;">
                     <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
                     <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
                 </div>
-                <div style="clear: both;"></div>
+                <div class="post-time-divider" style="clear: both; font-size: 10px;">nickname 於 {{timeP}} 發表</div>
                 <!-- postContent -->
-                <div style="font-weight: bold;font-size: 30px; color: brown;" v-html="post.postContent"></div>
+                <div style="font-weight: bold; font-size: 30px; color: brown;" v-html="post.postContent"></div>
                 <!-- postcomments -->
                 <div class="comment-group">
-                    <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in postcomments" :key="comment.commentID">{{ comment.commentContent }}
-                        <button class="" @click="deletePostComment(comment.commentID)">刪除留言</button>
-                    </div> 
+                    <div style="overflow: hidden;" class="list-group-item-comment" v-for="comment in postcomments"
+                        :key="comment.commentID">
+                        <span style="float: left; font-weight: normal; font-size: 15px; color: black;">{{ comment.commentContent}}</span>
+                        <button style="float: right;" class="" @click="deletePostComment(comment.commentID)">刪除留言</button>
+                    </div>
                 </div>
+                
                 <!--對文章進行留言-->
                 <div class="input-group mt-2">
-                    <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newPostCommentText[post.postID]" >
+                    <input type="text" class="form-control custom-input" placeholder="輸入你的留言"v-model="newPostCommentText[post.postID]">
                     <button class="custom-btn" @click="addPostComment(post.postID)">送出</button>
                 </div>
             </div>
@@ -52,25 +55,31 @@
             <!-- replies區 -->
             <div class="reply-section">
                 <div class="reply-group" v-for="reply in replies" :key="reply.replyID">
-                    <div style="font-weight: bold;font-size: 30px; color: brown; float: left;">{{ reply.replyTitle }}</div>
+                    
+
+                    <div style="float: left;">(空間)</div>
                     <div style="float: right;">
                         <button style="font-size: 15px;" class="" @click="deleteReply(reply.replyID)">刪除回覆</button>
                         <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
                     </div>
-                    <div style="clear: both;"></div>
+                    <div class="reply-time-divider" style="clear: both; font-size: 10px;">nickname 於 {{formatDateTime(reply.replyTime)}} 發表</div>
                     <!-- replyContent -->
                     <div class="list-group-item" style="font-weight: bold;font-size: 30px; color: brown;" v-html="reply.replyContent"></div>
+                    
                     <!-- replycomments -->
                     <div class="comment-group">
-                        <div style="font-weight: normal; font-size: 15px; color:black;" class="list-group-item" v-for="comment in reply.comments" :key="comment.commentID">{{ comment.commentContent }}
-                            <button class="" @click="deleteReplyComment(comment.commentID)">刪除留言</button>
+                        <div style="font-weight: normal; font-size: 15px; color:black; overflow: hidden;" class="list-group-item-comment"v-for="comment in reply.comments" :key="comment.commentID">
+                            <span style="float: left;">{{ comment.commentContent }}</span>
+                            <button style="float: right;" class="" @click="deleteReplyComment(comment.commentID)">刪除留言</button>
                         </div>
                     </div>
                     <!--對回覆進行留言-->
                     <div class="input-group mt-2">
-                        <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newReplyCommentText[reply.replyID]" >
+                        <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newReplyCommentText[reply.replyID]">
                         <button class="custom-btn" @click="addReplyComment(reply.replyID)">送出</button>
                     </div>
+                    
+
                 </div>
             </div>
         </div>
@@ -99,7 +108,7 @@
                         this.post = response01.data;
                         console.log("response01=", response01)
                         this.postcomments = response01.data.comments;
-
+                        this.timeP = this.formatDateTime(this.post.postTime);
                     });
                 axios.get(`http://localhost:8085/forum/post=${postID}/replies`)
                     .then(response02 => {
@@ -109,6 +118,18 @@
                     });
             },
             methods: {
+                formatDateTime(xxx) {
+                    var formattedDateTime = new Date(xxx).toLocaleString("zh-TW", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        minute: "2-digit",
+                        hour: "2-digit",
+                        second: "2-digit",
+                        hour12: true
+                    });
+                    return formattedDateTime;
+                },
                 goToAllPostPage() {
                     window.location.href = "allPosts-google.html"; // 更改為你的發表文章頁面的URL
                 },
@@ -234,9 +255,11 @@
                             // 根據後端處理的結果，更新前端的 UI 或執行其他操作
                             // 這裡可以更新前端的評論列表，刪除相應的評論
                             for (const reply of this.replies) {
-                                const index = this.reply.comments.findIndex(comment => comment.commentID === commentID); //v-for="comment in reply.comments" 
-                                if (index !== -1) {
-                                    this.reply.comments.splice(index, 1);
+                                if (reply.comments) {
+                                    const index = reply.comments.findIndex(comment => comment.commentID === commentID); //v-for="comment in reply.comments" 
+                                    if (index !== -1) {
+                                        reply.comments.splice(index, 1);
+                                    }
                                 }
                             }
                         })

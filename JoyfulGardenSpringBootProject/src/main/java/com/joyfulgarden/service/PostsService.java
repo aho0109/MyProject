@@ -66,4 +66,6 @@ public class PostsService {
 //	public List<Posts> findByMemberName(String memberName) {
 //		return poRepos.findByMembers_MemberName(memberName);
 //	}
+	
+	
 }

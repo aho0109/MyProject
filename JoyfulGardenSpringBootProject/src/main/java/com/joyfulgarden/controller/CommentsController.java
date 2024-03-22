@@ -1,5 +1,6 @@
 package com.joyfulgarden.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,6 @@ public class CommentsController {
 	@PostMapping("/forum/postandreply/comments")
 	public Comments doInsertComments(@RequestBody Comments comments) {
 		Comments ncomments = new Comments();
-
 /*
 		String typepString = String.valueOf(comments.getPostID()); // 將 typep 轉換為 String
 		String typerString = String.valueOf(comments.getReplyID()); // 將 typer 轉換為 String
@@ -56,7 +56,6 @@ public class CommentsController {
 		    targetType = "Replies";
 		}
 */
-		
 		Integer p = comments.getPostID();
 	    Integer r = comments.getReplyID();
 	    String targetType = null;
@@ -68,6 +67,7 @@ public class CommentsController {
 	    } else if (hasReplyID) {
 	        targetType = "Replies";
 	    }
+	    
 		ncomments.setTargetType(targetType);
 		ncomments.setCommentContent(comments.getCommentContent());
 		ncomments.setAuthorID(comments.getAuthorID());
@@ -75,15 +75,13 @@ public class CommentsController {
 		ncomments.setPostID(comments.getPostID());
 		ncomments.setReplyID(comments.getReplyID());
 		ncomments.setLikesCount(comments.getLikesCount());
-		ncomments.setCommentTime(comments.getCommentTime());
+		ncomments.setCommentTime(LocalDateTime.now());
 		ncomments.setDeleted(false);
 		commentsService.insert(ncomments);
 		System.out.println(ncomments);
 		return ncomments;
 		
 	}
-	
-	
 	
 	
 //	// 找全by replyID

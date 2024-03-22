@@ -1,5 +1,6 @@
 package com.joyfulgarden.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
@@ -43,16 +44,16 @@ public class Replies {
 	private Integer likesCount;
 	
 	@Column(name = "REPLYTIME")
-	private String replyTime;
+	private LocalDateTime replyTime;
 	
 	@Column(name = "ISDELETED")
 	private boolean isDeleted = Boolean.FALSE;
 	
-//	//@JsonIgnoreProperties({ "" })
-//	@JsonIgnore //但我不知道為何要加這行
-//	@ManyToOne
-//	@JoinColumn(name = "AUTHORID", referencedColumnName = "MEMBERID")
-//	private Members members;
+	//@JsonIgnoreProperties({ "" })
+	@JsonIgnore //但我不知道為何要加這行
+	@ManyToOne
+	@JoinColumn(name = "AUTHORID", referencedColumnName = "FORUMMEMBERID" , insertable = false, updatable = false)
+	private Forummembers forummembers;
 	
 	//@JsonIgnoreProperties({ "" })
 	@JsonIgnore //但我不知道為何要加這行
@@ -91,7 +92,7 @@ public class Replies {
 		return likesCount;
 	}
 
-	public String getReplyTime() {
+	public LocalDateTime getReplyTime() {
 		return replyTime;
 	}
 
@@ -127,7 +128,7 @@ public class Replies {
 		this.likesCount = likesCount;
 	}
 
-	public void setReplyTime(String replyTime) {
+	public void setReplyTime(LocalDateTime replyTime) {
 		this.replyTime = replyTime;
 	}
 
@@ -141,6 +142,14 @@ public class Replies {
 
 	public void setComments(List<Comments> comments) {
 		this.comments = comments;
+	}
+
+
+	public Forummembers getForummembers() {
+		return forummembers;
+	}
+	public void setForummembers(Forummembers forummembers) {
+		this.forummembers = forummembers;
 	}
 	
 	

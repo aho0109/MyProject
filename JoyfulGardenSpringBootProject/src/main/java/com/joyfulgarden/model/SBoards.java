@@ -1,5 +1,7 @@
 package com.joyfulgarden.model;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
@@ -39,8 +41,11 @@ public class Sboards {
 	@Column(name = "MBOARDID")
 	private Integer mboardID;
 	
+//	@Column(name = "CREATETIME")
+//	private String createTime;
+	
 	@Column(name = "CREATETIME")
-	private String createTime;
+	private LocalDateTime createTime;
 	
 	@Column(name = "ISDELETED")
 	private boolean isDeleted = Boolean.FALSE;
@@ -82,7 +87,7 @@ public class Sboards {
 		return mboardID;
 	}
 
-	public String getCreateTime() {
+	public LocalDateTime getCreateTime() {
 		return createTime;
 	}
 
@@ -114,7 +119,7 @@ public class Sboards {
 		this.mboardID = mboardID;
 	}
 
-	public void setCreateTime(String createTime) {
+	public void setCreateTime(LocalDateTime createTime) {
 		this.createTime = createTime;
 	}
 
