@@ -74,6 +74,19 @@
                 };
             },
             methods: {
+                getCookieValue(cookieName) {
+                    // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
+                    var cookies = document.cookie.split(';');
+                    // 遍歷每個 Cookie
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // 如果找到了目標名稱的 Cookie 
+                        if (cookie.startsWith(cookieName + '=')) {
+                            return cookie.substring(cookieName.length + 1);// 提取並返回該 Cookie 的值
+                        }
+                    }
+                    return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
+                },
                 // 定義提交函數
                 submitContent() {
                     if (window.editor) { // 確保編輯器已經初始化
@@ -86,7 +99,7 @@
                             postTitle: this.postTitle,
                             postContent: content,
                             sboardID: this.sboardID, // 使用Vue中的sboardID(若改成動態到url中，需變註解)
-                            authorID: 1
+                            authorID: this.getCookieValue('sessionForummemberID')
                         };
 
                         // 使用 Axios 發送 POST 請求

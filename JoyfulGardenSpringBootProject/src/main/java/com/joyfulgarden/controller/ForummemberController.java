@@ -3,6 +3,8 @@ package com.joyfulgarden.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,21 @@ public class ForummemberController {
     public ResponseEntity<Forummembers> login(@RequestBody Forummembers forummembers) {
     	Forummembers loggedMember = forummembersService.login(forummembers.getNickname(), forummembers.getPassword());
         return ResponseEntity.ok(loggedMember);
+    }
+    
+    @GetMapping("/forum/forummembers/{forummemberID}")
+    public Forummembers doForummembersByID(@PathVariable(name = "forummemberID") Integer forummemberID) {
+    	return forummembersService.findById(forummemberID);
+    }
+    
+    @GetMapping("/forum/forummembers/nicknameOf/{forummemberID}")
+    public  ResponseEntity<String> doNicknameByForummemberID(@PathVariable(name = "forummemberID") Integer forummemberID) {
+    	Forummembers forummember = forummembersService.findNicknameByForummemberID(forummemberID);
+    	if (forummember != null) {
+            return ResponseEntity.ok(forummember.getNickname());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
     
 //    @PostMapping("/forum/login")

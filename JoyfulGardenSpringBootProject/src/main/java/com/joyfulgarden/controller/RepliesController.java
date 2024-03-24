@@ -69,13 +69,13 @@ public class RepliesController {
 		Replies ureplies = repliesService.findById(replyID);
 		ureplies.setReplyContent(reply.getReplyContent());
 		//upost.setMembers(members);
-		ureplies.setAuthorID(reply.getAuthorID());
+		//ureplies.setAuthorID(reply.getAuthorID());
 		//upost.setSboards(replies.getSboards());// 有fk所以不能輸入不存在之sboardID
 		ureplies.setLikesCount(reply.getLikesCount());
 		//ureplies.setReplyTime(reply.getReplyTime());
 		//npost.setDeleted(true);
 		repliesService.update(ureplies);
-		return ureplies;		
+		return ureplies;
 	}
 	
 }

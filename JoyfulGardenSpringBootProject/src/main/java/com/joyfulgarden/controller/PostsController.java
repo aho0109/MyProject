@@ -82,7 +82,7 @@ public class PostsController {
 		upost.setPostTitle(post.getPostTitle());
 		upost.setPostContent(post.getPostContent());
 		//upost.setMembers(members);
-		upost.setAuthorID(post.getAuthorID());
+		//upost.setAuthorID(post.getAuthorID());
 		upost.setSboardID(post.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		upost.setLikesCount(post.getLikesCount());
 		upost.setPostTime(post.getPostTime());

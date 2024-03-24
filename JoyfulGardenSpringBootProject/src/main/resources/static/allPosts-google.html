@@ -83,16 +83,16 @@
                         </div>
                     </td>
                     <td style="width: 150px;">
-                        <div v-if="loginStaus != null">
+                        <div v-if="forummemberIDValue == post.authorID">
                             <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
                             <button style="font-size: 15px;" class=""
                                 @click="goToUpdatePostPage(post.postID)">編輯文章</button>
                         </div>
-                        <div v-if="loginStaus == null">
+                        <!--<div v-if="loginStaus == null">
                             <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">AAAAAAA刪除文章</button>
                             <button style="font-size: 15px;" class=""
                                 @click="goToUpdatePostPage(post.postID)">AAAAAAA編輯文章</button>
-                        </div>
+                        </div>-->
                     </td>
                 </tr>
             </tbody>
@@ -111,6 +111,10 @@
                     selectedSboard: '',
                     loginStaus: '你好',
                     postImageURL: '',
+                    //var a1 = true && true; // t && t 回傳 true
+                    //idConform: '' // 初始值設為 false
+                    forummemberIDValue: ''
+
                 };
             },
             mounted() {
@@ -123,6 +127,13 @@
                         //const regex = /src="([^"]*)"/;
                         //const xxx = regex.exec(test01);
                         //console.log(xxx);
+                        // 使用示例：假設你要獲取名為 sessionNickname 的 Cookie 的值
+                        var nicknameValue = this.getCookieValue('sessionNickname');
+                        this.forummemberIDValue = this.getCookieValue('sessionForummemberID')
+                        console.log('Nickname:', nicknameValue);
+                        //console.log('ForummemberID:', forummemberIDValue); //因為我要在上面用到forummemberIDValue，所以一開始要在data區先初始化，所以這行會是空而報錯，須改成下面那行才能顯示
+                        console.log('ForummemberID:', this.forummemberIDValue);
+                        //console.log(this.idConform = (forummemberIDValue ===  this.posts.authorID))
                     })
                     .catch(error => {
                         console.error('Error fetching posts:', error);
@@ -154,6 +165,19 @@
                         }
 
                     });
+                },
+                getCookieValue(cookieName) {
+                    // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
+                    var cookies = document.cookie.split(';');
+                    // 遍歷每個 Cookie
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // 如果找到了目標名稱的 Cookie 
+                        if (cookie.startsWith(cookieName + '=')) {
+                            return cookie.substring(cookieName.length + 1);// 提取並返回該 Cookie 的值
+                        }
+                    }
+                    return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
                 },
                 filterPostsBySboard(sboardID) {
                     axios.get(`http://localhost:8085/forum/sboard=${sboardID}/posts`)

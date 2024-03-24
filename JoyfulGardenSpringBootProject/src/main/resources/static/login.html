@@ -102,13 +102,16 @@
                         .then(response => {
                             // 登入成功，將後端返回的 Session ID 存儲在 Cookie 中
                             document.cookie = `sessionNickname=${response.data.nickname}; path=/`;
+                            document.cookie = `sessionForummemberID=${response.data.forummemberID}; path=/`;
                             // 其他處理，如跳轉頁面
                             console.log('response:', response)
                             console.log(document.cookie)
-                            //window.location.href = "allPosts-google.html"
+                            window.location.href = "allPosts-google.html"
                             // 使用示例：假設你要獲取名為 sessionNickname 的 Cookie 的值
                             var nicknameValue = this.getCookieValue('sessionNickname');
+                            var forummemberIDValue = this.getCookieValue('sessionForummemberID')
                             console.log('Nickname:', nicknameValue);
+                            console.log('ForummemberID:', forummemberIDValue);
                         })
                         .catch(error => {
                             // 處理錯誤
@@ -124,18 +127,15 @@
                 getCookieValue(cookieName) {
                     // 獲取所有的 Cookie
                     var cookies = document.cookie.split(';');
-
                     // 遍歷每個 Cookie
                     for (var i = 0; i < cookies.length; i++) {
                         var cookie = cookies[i].trim();
-
                         // 如果找到了目標名稱的 Cookie
                         if (cookie.startsWith(cookieName + '=')) {
                             // 提取並返回該 Cookie 的值
                             return cookie.substring(cookieName.length + 1);
                         }
                     }
-
                     // 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
                     return '';
                 }
