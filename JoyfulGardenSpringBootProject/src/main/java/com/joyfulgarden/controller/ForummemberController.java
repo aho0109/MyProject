@@ -32,10 +32,15 @@ public class ForummemberController {
         return ResponseEntity.ok(loggedMember);
     }
     
+    
+    
     @GetMapping("/forum/forummembers/{forummemberID}")
     public Forummembers doForummembersByID(@PathVariable(name = "forummemberID") Integer forummemberID) {
     	return forummembersService.findById(forummemberID);
     }
+    
+    
+    
     
     @GetMapping("/forum/forummembers/nicknameOf/{forummemberID}")
     public  ResponseEntity<String> doNicknameByForummemberID(@PathVariable(name = "forummemberID") Integer forummemberID) {

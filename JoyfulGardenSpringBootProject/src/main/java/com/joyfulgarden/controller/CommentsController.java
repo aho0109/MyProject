@@ -70,7 +70,7 @@ public class CommentsController {
 	    
 		ncomments.setTargetType(targetType);
 		ncomments.setCommentContent(comments.getCommentContent());
-		ncomments.setAuthorID(comments.getAuthorID());
+		ncomments.setAuthorNickname(comments.getAuthorNickname());
 		//ncomments.setTargetType(comments.getTargetType());
 		ncomments.setPostID(comments.getPostID());
 		ncomments.setReplyID(comments.getReplyID());

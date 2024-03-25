@@ -39,8 +39,8 @@ public class Posts {
 	@Column(name = "POSTCONTENT")
 	private String postContent;
 
-	@Column(name = "AUTHORID")
-	private Integer authorID;
+	@Column(name = "AUTHORNICKNAME")
+	private String authorNickname;
 	
 	@Column(name = "SBOARDID") // 加了"insertable = false, updatable = false"這裡才能存在
 	private Integer sboardID;
@@ -58,7 +58,7 @@ public class Posts {
 	//@JsonIgnoreProperties({ "" })
 	@JsonIgnore //但我不知道為何要加這行
 	@ManyToOne
-	@JoinColumn(name = "AUTHORID", referencedColumnName = "FORUMMEMBERID" , insertable = false, updatable = false)
+	@JoinColumn(name = "AUTHORNICKNAME", referencedColumnName = "NICKNAME" , insertable = false, updatable = false)
 	private Forummembers forummembers;
 
 	
@@ -81,14 +81,14 @@ public class Posts {
 	
 	public Posts() {}
 	
-	public Posts(Integer postID, String postTitle, String postContent, Integer authorID, Integer sboardID,
+	public Posts(Integer postID, String postTitle, String postContent, String authorNickname, Integer sboardID,
 			Integer likesCount, LocalDateTime postTime, boolean isDeleted, Forummembers forummembers, Sboards sboards,
 			List<Replies> replies, List<Comments> comments) {
 		super();
 		this.postID = postID;
 		this.postTitle = postTitle;
 		this.postContent = postContent;
-		this.authorID = authorID;
+		this.authorNickname = authorNickname;
 		this.sboardID = sboardID;
 		this.likesCount = likesCount;
 		this.postTime = postTime;
@@ -112,8 +112,8 @@ public class Posts {
 		return postContent;
 	}
 
-	public Integer getAuthorID() {
-		return authorID;
+	public String getAuthorNickname() {
+		return authorNickname;
 	}
 	
 
@@ -158,8 +158,8 @@ public class Posts {
 		this.postContent = postContent;
 	}
 
-	public void setAuthorID(Integer authorID) {
-		this.authorID = authorID;
+	public void setAuthorNickname(String authorNickname) {
+		this.authorNickname = authorNickname;
 	}
 	
 	public void setSboardID(Integer sboardID) {

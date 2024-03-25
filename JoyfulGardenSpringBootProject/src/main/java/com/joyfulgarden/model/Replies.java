@@ -34,8 +34,8 @@ public class Replies {
 	@Column(name = "REPLYCONTENT")
 	private String replyContent;
 
-	@Column(name = "AUTHORID")
-	private Integer authorID;
+	@Column(name = "AUTHORNICKNAME")
+	private String authorNickname;
 	
 	@Column(name = "POSTID")
 	private Integer postID;
@@ -52,7 +52,7 @@ public class Replies {
 	//@JsonIgnoreProperties({ "" })
 	@JsonIgnore //但我不知道為何要加這行
 	@ManyToOne
-	@JoinColumn(name = "AUTHORID", referencedColumnName = "FORUMMEMBERID" , insertable = false, updatable = false)
+	@JoinColumn(name = "AUTHORNICKNAME", referencedColumnName = "NICKNAME" , insertable = false, updatable = false)
 	private Forummembers forummembers;
 	
 	//@JsonIgnoreProperties({ "" })
@@ -80,8 +80,8 @@ public class Replies {
 		return replyContent;
 	}
 
-	public Integer getAuthorID() {
-		return authorID;
+	public String getAuthorNickname() {
+		return authorNickname;
 	}
 	
 	public Integer getPostID() {
@@ -116,8 +116,8 @@ public class Replies {
 		this.replyContent = replyContent;
 	}
 
-	public void setAuthorID(Integer authorID) {
-		this.authorID = authorID;
+	public void setAuthorNickname(String authorNickname) {
+		this.authorNickname = authorNickname;
 	}
 	
 	public void setPostID(Integer postID) {

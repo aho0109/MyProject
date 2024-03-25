@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.joyfulgarden.model.Posts;
+import com.joyfulgarden.model.Replies;
 import com.joyfulgarden.service.PostsService;
+import com.joyfulgarden.service.RepliesService;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:5500")
@@ -22,6 +24,12 @@ public class PostsController {
 
 	@Autowired
 	private PostsService postsService;
+	
+	@Autowired
+	private RepliesService repliesService;
+	
+//	@Autowired
+//    private RecommendationService recommendationService;
 	
 	// 刪除
 	@DeleteMapping("/forum/posts/{postID}")
@@ -42,10 +50,28 @@ public class PostsController {
 		return postsService.findAllPostsBySboardID(sboardID);
 	}
 	
+	// 找全by sboardID 由新到舊
+	@GetMapping("/forum/sboard={sboardID}/postsDesc")
+	public List<Posts> doAllPostsBySboardIDOrderByPostIDDesc(@PathVariable(name = "sboardID") Integer sboardID) {
+		return postsService.findAllPostsBySboardIDOrderByPostIDDesc(sboardID);
+	}
+	
 	// 找全o
 	@GetMapping("/forum/posts")
 	public List<Posts> doAllPosts() {
 		return postsService.findAllPosts();
+	}
+	
+	//找全由新到舊
+	@GetMapping("/forum/postsDesc")
+	public List<Posts> doAllPostsDesc() {
+		return postsService.findAllPostsDesc();
+	}
+	
+	// 作者查全
+	@GetMapping("/forum/postsDesc/{authorNickname}")
+	public List<Posts> doAllPostsByAuthorNicknameDesc(@PathVariable(name = "authorNickname")String authorNickname) {
+		return postsService.findAllPostsByAuthorNicknameOrderByPostIDDesc(authorNickname);
 	}
 	
 	
@@ -64,7 +90,7 @@ public class PostsController {
 		npost.setPostTitle(post.getPostTitle());
 		npost.setPostContent(post.getPostContent());
 		//npost.setForummembers(post.getForummembers());
-		npost.setAuthorID(post.getAuthorID());
+		npost.setAuthorNickname(post.getAuthorNickname());
 		npost.setSboardID(post.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		//npost.setSboardID(sboardID);
 		npost.setLikesCount(post.getLikesCount());
@@ -82,7 +108,7 @@ public class PostsController {
 		upost.setPostTitle(post.getPostTitle());
 		upost.setPostContent(post.getPostContent());
 		//upost.setMembers(members);
-		//upost.setAuthorID(post.getAuthorID());
+		//upost.setAuthorNickname(post.getAuthorNickname());
 		upost.setSboardID(post.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		upost.setLikesCount(post.getLikesCount());
 		upost.setPostTime(post.getPostTime());
@@ -91,4 +117,21 @@ public class PostsController {
 		return upost;		
 	}
 	
+//	// 推薦文章
+//    @GetMapping("/forum/posts/{postID}/recommendations")
+//    public List<Posts> doGetRecommendedPosts(@PathVariable(name = "postID") Integer postID) {
+//    	try {
+//            // 首先獲取目前所在的 post
+//            Posts currentPost = postsService.findById(postID);
+//            // 假設你已經能夠獲取到目前所在的 post 的所有回覆
+//            List<Replies> replies = repliesService.findAllRepliesByPostsID(postID);
+//            // 再根據目前所在的 post 和其所屬的 replies 生成推薦的 posts
+//            List<Posts> recommendedPosts = recommendationService.generateRecommendations(currentPost, replies);
+//            return recommendedPosts;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // 返回空列表或者錯誤訊息，視情況而定
+//            return null;
+//        }
+//    }
 }

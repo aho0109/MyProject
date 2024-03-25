@@ -52,10 +52,26 @@ public class PostsService {
 		return poRepos.findAll();
 	}
 	
+	//找全由新到舊
+	public List<Posts> findAllPostsDesc() {
+		return poRepos.findAllByOrderByPostIDDesc();
+	}
+	
 	// 找by sboardID
 	public List<Posts> findAllPostsBySboardID(Integer sboardID) {
 		return poRepos.findBySboardID(sboardID);
 		
+	}
+	
+	// 作者查全
+	public List<Posts> findAllPostsByAuthorNicknameOrderByPostIDDesc(String authorNickname) {
+		return poRepos.findByAuthorNicknameOrderByPostIDDesc(authorNickname);
+	}
+	
+	// 找by sboardID 由新到舊
+	public List<Posts> findAllPostsBySboardIDOrderByPostIDDesc(Integer sboardID) {
+		return poRepos.findBySboardIDOrderByPostIDDesc(sboardID);
+			
 	}
 	
 	// 關鍵字模糊搜尋

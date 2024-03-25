@@ -10,11 +10,21 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	
 	//內建 查全 新增o 修改o
 	
+	// 查全由新到舊
+	public List<Posts> findAllByOrderByPostIDDesc();
+	
+	
 	//查bymembernameo
 	//public List<Posts> findByMembers_MemberName(String memberName);
 	
 	//查全by sboardID
-	public List<Posts> findBySboardID(Integer sboardID); 
+	public List<Posts> findBySboardID(Integer sboardID);
+	
+	// 作者查全
+	public List<Posts> findByAuthorNicknameOrderByPostIDDesc(String authorNickname);
+	
+	//查全by sboardID由新到舊
+	public List<Posts> findBySboardIDOrderByPostIDDesc(Integer sboardID);
 	
 	//查詢標題like
 	public List<Posts> findByPostTitleContaining(String xxxtitle);
@@ -26,7 +36,7 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	// 關鍵字模糊搜尋
 	// 但目前bug:文章刪了但 回覆沒刪或留言沒刪 找的時候還是會跑出來 點進去就消失
 	@Query(value = "SELECT p.postID AS postID, p.postTitle AS postTitle, p.postContent AS postContent, " +
-            "p.authorID AS authorID, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
+            "p.authorNickname AS authorNickname, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
             "p.postTime AS postTime, p.isDeleted AS isDeleted " +
             "FROM Posts p LEFT JOIN Replies r ON p.postID = r.postID " +
             "WHERE (p.postTitle LIKE %:keyword% OR " +
@@ -40,7 +50,7 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	
 	// 沒用到
 	@Query(value = "SELECT p.postID AS postID, p.postTitle AS postTitle, p.postContent AS postContent, " +
-            "p.authorID AS authorID, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
+            "p.authorNickname AS authorNickname, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
             "p.postTime AS postTime, p.isDeleted AS isDeleted " +
             "FROM Posts p LEFT JOIN Replies r ON p.postID = r.postID " +
             "WHERE (p.postTitle LIKE %:keyword% OR " +

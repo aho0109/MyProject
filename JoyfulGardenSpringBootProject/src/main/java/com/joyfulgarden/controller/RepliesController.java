@@ -50,7 +50,7 @@ public class RepliesController {
 									@RequestBody Replies reply) {
 		Replies nreplies = new Replies();
 		nreplies.setReplyContent(reply.getReplyContent());
-		nreplies.setAuthorID(reply.getAuthorID());
+		nreplies.setAuthorNickname(reply.getAuthorNickname());
 		//nreplies.setSboardID(replies.getSboardID());// 有fk所以不能輸入不存在之sboardID
 		nreplies.setPostID(postID);
 		nreplies.setLikesCount(reply.getLikesCount());
@@ -68,12 +68,12 @@ public class RepliesController {
 									@RequestBody Replies reply) {
 		Replies ureplies = repliesService.findById(replyID);
 		ureplies.setReplyContent(reply.getReplyContent());
-		//upost.setMembers(members);
-		//ureplies.setAuthorID(reply.getAuthorID());
-		//upost.setSboards(replies.getSboards());// 有fk所以不能輸入不存在之sboardID
+		//ureplies.setMembers(members);
+		//ureplies.setAuthorNickname(reply.getAuthorNickname());
+		//ureplies.setSboards(replies.getSboards());// 有fk所以不能輸入不存在之sboardID
 		ureplies.setLikesCount(reply.getLikesCount());
 		//ureplies.setReplyTime(reply.getReplyTime());
-		//npost.setDeleted(true);
+		//ureplies.setDeleted(true);
 		repliesService.update(ureplies);
 		return ureplies;
 	}

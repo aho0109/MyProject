@@ -29,18 +29,20 @@
             <!-- post區 -->
             <div class="post-section">
                 <h2 style="font-weight: bold; font-size: 50px; float: left;">{{ post.postTitle }}</h2>
-                <div style="float: right;" v-if="forummemberIDValue == post.authorID">
+                <div style="float: right;" v-if="nicknameValue == post.authorNickname">
                     <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
                     <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
                 </div>
-                <div class="post-time-divider" style="clear: both; font-size: 10px;">{{nicknameOfPostAuthor}} 於 {{timeP}} 發表</div>
+                <div class="post-time-divider" style="clear: both; font-size: 10px;">
+                    <a v-bind:href="'listPosts.html?authorNickname=' + post.authorNickname">{{post.authorNickname}}</a> 於 {{timeP}} 發表
+                </div>
                 <!-- postContent -->
                 <div style="font-weight: bold; font-size: 30px; color: brown;" v-html="post.postContent"></div>
                 <!-- postcomments -->
                 <div class="comment-group">
                     <div style="overflow: hidden;" class="list-group-item-comment" v-for="comment in postcomments"
                         :key="comment.commentID">
-                        <span style="float: left; font-weight: normal; font-size: 15px; color: black;">{{ comment.commentContent}}</span>
+                        <span style="float: left; font-weight: normal; font-size: 15px; color: black;">{{comment.authorNickname}}  {{ comment.commentContent}}</span>
                         <button style="float: right;" class="" @click="deletePostComment(comment.commentID)" v-if="forummemberIDValue == comment.authorID">刪除留言</button>
                     </div>
                 </div>
@@ -58,18 +60,20 @@
                     
 
                     <div style="float: left;">(空間)</div>
-                    <div style="float: right;" v-if="forummemberIDValue == reply.authorID">
+                    <div style="float: right;" v-if="nicknameValue == reply.authorNickname">
                         <button style="font-size: 15px;" class="" @click="deleteReply(reply.replyID)">刪除回覆</button>
                         <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
                     </div>
-                    <div class="reply-time-divider" style="clear: both; font-size: 10px;">{{nicknameOfReplyAuthor}} 於 {{formatDateTime(reply.replyTime)}} 發表</div>
+                    <div class="reply-time-divider" style="clear: both; font-size: 10px;">
+                        <a v-bind:href="'listPosts.html?authorNickname=' + reply.authorNickname">{{reply.authorNickname}}</a> 於 {{formatDateTime(reply.replyTime)}} 發表</div>
                     <!-- replyContent -->
                     <div class="list-group-item" style="font-weight: bold;font-size: 30px; color: brown;" v-html="reply.replyContent"></div>
                     
                     <!-- replycomments -->
                     <div class="comment-group">
                         <div style="font-weight: normal; font-size: 15px; color:black; overflow: hidden;" class="list-group-item-comment"v-for="comment in reply.comments" :key="comment.commentID">
-                            <span style="float: left;">{{ comment.commentContent }}</span>
+                            <span style="float: left;">{{ comment.authorNickname }}  {{ comment.commentContent }}</span>
+                            <div class="reply-time-divider" style="clear: both; font-size: 10px; color: rgb(117, 117, 117);">{{formatDateTime(comment.commentTime)}}</div>
                             <button style="float: right;" class="" @click="deleteReplyComment(comment.commentID)" v-if="forummemberIDValue == comment.authorID">刪除留言</button>
                         </div>
                     </div>
@@ -100,8 +104,9 @@
                     newPostCommentText: {}, // 新增一個物件來儲存輸入框的值，以文章的ID作為鍵
                     newReplyCommentText: {}, // 新增一個物件來儲存輸入框的值，以回覆的ID作為鍵
                     forummemberIDValue: '',
-                    nicknameOfPostAuthor: '',
-                    nicknameOfReplyAuthor: '',
+                    //nicknameOfPostAuthor: '',
+                    //nicknameOfReplyAuthor: '',
+                    nicknameValue: '',
                 };
             },
             mounted() {
@@ -113,12 +118,12 @@
                         this.postcomments = response01.data.comments;
                         this.timeP = this.formatDateTime(this.post.postTime);
                         //
-                        var nicknameValue = this.getCookieValue('sessionNickname');
-                        //var forummemberIDValue = this.getCookieValue('sessionForummemberID')
-                        this.forummemberIDValue = this.getCookieValue('sessionForummemberID')
-                        console.log('Nickname:', nicknameValue);
-                        console.log('ForummemberID:', this.forummemberIDValue);
-                        this.nicknameOfPostAuthor = this.getNicknameOfPostAuthor(this.post.authorID)
+                        this.nicknameValue = this.getCookieValue('sessionNickname');
+                        var forummemberIDValue = this.getCookieValue('sessionForummemberID')
+                        //this.forummemberIDValue = this.getCookieValue('sessionForummemberID')
+                        console.log('Nickname:', this.nicknameValue);
+                        console.log('ForummemberID:', forummemberIDValue);
+                        //this.nicknameOfPostAuthor = this.getNicknameOfPostAuthor(this.post.authorID)
                     });
                 axios.get(`http://localhost:8085/forum/post=${postID}/replies`)
                     .then(response02 => {
@@ -126,9 +131,9 @@
                         console.log("response02=", response02)
                         //this.replycomments = response02.data[0].comments;
                         // 在取得回覆資料後，遍歷回覆並獲取回覆作者的暱稱
-                        this.replies.forEach(reply => {
+                        /*this.replies.forEach(reply => {
                             this.nicknameOfReplyAuthor = this.getNicknameOfReplyAuthor(reply.authorID);
-                        });
+                        });*/
                     });
                 /*axios.get(`/forum/forummembers/${forummemberID}`)
                     .then(response03 => {
@@ -148,7 +153,7 @@
                     });
                     return formattedDateTime;
                 },
-                getNicknameOfPostAuthor(xxx) {
+                /*getNicknameOfPostAuthor(xxx) {
                     axios.get(`/forum/forummembers/${xxx}`)
                     .then(responsePost => {
                         console.log("responsePost=", responsePost);
@@ -163,7 +168,7 @@
                         .catch(error => {
                             console.error('作者ID找nickname失敗:', error);
                         });
-                },
+                },*/
                 getCookieValue(cookieName) {
                     // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
                     var cookies = document.cookie.split(';');
@@ -198,7 +203,7 @@
                     const comment = {
                         postID: postID, // 文章的ID
                         commentContent: commentContent, // 留言的內容
-                        authorID: this.getCookieValue('sessionForummemberID')
+                        authorNickname: this.getCookieValue('sessionNickname')
                     };
                     // 使用axios.post()方法將評論對象發送到後端的API端點
                     axios.post('http://localhost:8085/forum/postandreply/comments', comment)
@@ -222,7 +227,7 @@
                     const comment = {
                         replyID: replyID, // 回覆的ID
                         commentContent: commentContent, // 留言的內容
-                        authorID: this.getCookieValue('sessionForummemberID'),
+                        authorNickname: this.getCookieValue('sessionNickname'),
                     };
                     // 使用axios.post()方法將評論對象發送到後端的API端點
                     axios.post('http://localhost:8085/forum/postandreply/comments', comment)

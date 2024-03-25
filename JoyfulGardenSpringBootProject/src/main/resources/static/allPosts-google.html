@@ -83,7 +83,7 @@
                         </div>
                     </td>
                     <td style="width: 150px;">
-                        <div v-if="forummemberIDValue == post.authorID">
+                        <div v-if="nicknameValue == post.authorNickname">
                             <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
                             <button style="font-size: 15px;" class=""
                                 @click="goToUpdatePostPage(post.postID)">編輯文章</button>
@@ -113,12 +113,12 @@
                     postImageURL: '',
                     //var a1 = true && true; // t && t 回傳 true
                     //idConform: '' // 初始值設為 false
-                    forummemberIDValue: ''
-
+                    //forummemberIDValue: ''//後來改成認nickname
+                    nicknameValue: '',
                 };
             },
             mounted() {
-                axios.get("http://localhost:8085/forum/posts")
+                axios.get("http://localhost:8085/forum/postsDesc")
                     .then(response => {
                         this.posts = response.data;
                         //test01 = response.data[18].postContent;
@@ -128,12 +128,13 @@
                         //const xxx = regex.exec(test01);
                         //console.log(xxx);
                         // 使用示例：假設你要獲取名為 sessionNickname 的 Cookie 的值
-                        var nicknameValue = this.getCookieValue('sessionNickname');
-                        this.forummemberIDValue = this.getCookieValue('sessionForummemberID')
-                        console.log('Nickname:', nicknameValue);
+                        this.nicknameValue = this.getCookieValue('sessionNickname');
+                        var forummemberIDValue = this.getCookieValue('sessionForummemberID')//後來改成認nickname
+                        console.log('Nickname:', this.nicknameValue);
+                        console.log('ForummemberID:', forummemberIDValue);
+
                         //console.log('ForummemberID:', forummemberIDValue); //因為我要在上面用到forummemberIDValue，所以一開始要在data區先初始化，所以這行會是空而報錯，須改成下面那行才能顯示
-                        console.log('ForummemberID:', this.forummemberIDValue);
-                        //console.log(this.idConform = (forummemberIDValue ===  this.posts.authorID))
+                        //console.log('ForummemberID:', this.forummemberIDValue);
                     })
                     .catch(error => {
                         console.error('Error fetching posts:', error);
@@ -180,11 +181,12 @@
                     return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
                 },
                 filterPostsBySboard(sboardID) {
-                    axios.get(`http://localhost:8085/forum/sboard=${sboardID}/posts`)
+                    axios.get(`http://localhost:8085/forum/sboard=${sboardID}/postsDesc`)
                         .then(response => {
                             this.posts = response.data;
                             console.log(response)
                             this.extractImageURL(1); // 在資料加載後執行提取圖片的方法
+                            //window.location.href = `allPosts-google.html?sboardID=${sboardID}`
                         });
                 },
                 doSearchPosts() {

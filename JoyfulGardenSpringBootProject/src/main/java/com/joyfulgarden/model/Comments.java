@@ -32,8 +32,8 @@ public class Comments {
 	@Column(name = "COMMENTCONTENT")
 	private String commentContent;
 
-	@Column(name = "AUTHORID")
-	private Integer authorID;
+	@Column(name = "AUTHORNICKNAME")
+	private String authorNickname;
 	
 	@Column(name = "TARGETTYPE")
 	private String targetType;
@@ -56,7 +56,7 @@ public class Comments {
 	//@JsonIgnoreProperties({ "" })
 	@JsonIgnore //但我不知道為何要加這行
 	@ManyToOne
-	@JoinColumn(name = "AUTHORID", referencedColumnName = "FORUMMEMBERID" , insertable = false, updatable = false)
+	@JoinColumn(name = "AUTHORNICKNAME", referencedColumnName = "NICKNAME" , insertable = false, updatable = false)
 	private Forummembers forummembers;
 	
 	//@JsonIgnoreProperties({ "" })
@@ -87,8 +87,8 @@ public class Comments {
 		return commentContent;
 	}
 
-	public Integer getAuthorID() {
-		return authorID;
+	public String getAuthorNickname() {
+		return authorNickname;
 	}
 
 	public String getTargetType() {
@@ -131,8 +131,8 @@ public class Comments {
 		this.commentContent = commentContent;
 	}
 
-	public void setAuthorID(Integer authorID) {
-		this.authorID = authorID;
+	public void setAuthorNickname(String authorNickname) {
+		this.authorNickname = authorNickname;
 	}
 
 	public void setTargetType(String targetType) {

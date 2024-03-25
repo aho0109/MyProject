@@ -70,7 +70,7 @@
                         var reply = {
                             replyContent: content,
                             postID: postID, // 使用Vue中的postID(若改成動態到url中，需變註解)
-                            authorID: this.getCookieValue('sessionForummemberID')
+                            authorNickname: this.getCookieValue('sessionNickname')
                         };
 
                         // 使用 Axios 發送 POST 請求
