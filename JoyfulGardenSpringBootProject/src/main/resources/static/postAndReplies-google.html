@@ -43,7 +43,7 @@
                     <div style="overflow: hidden;" class="list-group-item-comment" v-for="comment in postcomments"
                         :key="comment.commentID">
                         <span style="float: left; font-weight: normal; font-size: 15px; color: black;">{{comment.authorNickname}}  {{ comment.commentContent}}</span>
-                        <button style="float: right;" class="" @click="deletePostComment(comment.commentID)" v-if="forummemberIDValue == comment.authorID">刪除留言</button>
+                        <button style="float: right;" class="" @click="deletePostComment(comment.commentID)" v-if="nicknameValue == comment.authorNickname">刪除留言</button>
                     </div>
                 </div>
                 
@@ -73,8 +73,8 @@
                     <div class="comment-group">
                         <div style="font-weight: normal; font-size: 15px; color:black; overflow: hidden;" class="list-group-item-comment"v-for="comment in reply.comments" :key="comment.commentID">
                             <span style="float: left;">{{ comment.authorNickname }}  {{ comment.commentContent }}</span>
+                            <button style="float: right;" class="" @click="deleteReplyComment(comment.commentID)" v-if="nicknameValue == comment.authorNickname">刪除留言</button>
                             <div class="reply-time-divider" style="clear: both; font-size: 10px; color: rgb(117, 117, 117);">{{formatDateTime(comment.commentTime)}}</div>
-                            <button style="float: right;" class="" @click="deleteReplyComment(comment.commentID)" v-if="forummemberIDValue == comment.authorID">刪除留言</button>
                         </div>
                     </div>
                     <!--對回覆進行留言-->
@@ -107,6 +107,7 @@
                     //nicknameOfPostAuthor: '',
                     //nicknameOfReplyAuthor: '',
                     nicknameValue: '',
+                    commentTime: '',
                 };
             },
             mounted() {
@@ -239,11 +240,13 @@
                             const newComment = {
                                 commentID: response.data.commentID, // 假設後端返回了新留言的ID
                                 commentContent: commentContent,
-                                authorID: response.data.authorID
+                                authorNickname: response.data.authorNickname,
+                                commentTime: this.formatDateTime(response.data.commentTime)
                             };
                             const replyIndex = this.replies.findIndex(reply => reply.replyID === replyID);
                             this.replies[replyIndex].comments.push(newComment);
                             this.newReplyCommentText[replyID] = '';// 清空輸入框
+                            this.$forceUpdate();
                         })
                         .catch(error => {// 評論添加失敗後的處理
                             console.error('對回覆評論添加失敗:', error);
@@ -324,7 +327,6 @@
                 }
             }
         });
-
         app.mount("#app");
 
         function getUrlParameter(name) {

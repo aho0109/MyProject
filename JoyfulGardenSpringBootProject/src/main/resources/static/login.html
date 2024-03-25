@@ -43,14 +43,14 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" placeholder="請輸入nickname" v-model="nickname">
+                            <input type="text" class="form-control" placeholder="請輸入nickname" v-model="fnickname">
                         </div>
 
                         <div class="input-group form-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                             </div>
-                            <input type="password" class="form-control" placeholder="請輸入密碼" v-model="password">
+                            <input type="password" class="form-control" placeholder="請輸入密碼" v-model="fpassword">
                         </div>
 
                         <div class="row align-items-center remember">
@@ -85,8 +85,8 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    nickname: '',
-                    password: '',
+                    fnickname: '',
+                    fpassword: '',
                 };
             },
             mounted() {
@@ -95,13 +95,13 @@
             methods: {
                 login() {
                     var forummembers = {
-                        nickname: this.nickname,
-                        password: this.password
+                        fnickname: this.fnickname,
+                        fpassword: this.fpassword
                     };
                     axios.post('http://localhost:8085/forum/login', forummembers)
                         .then(response => {
                             // 登入成功，將後端返回的 Session ID 存儲在 Cookie 中
-                            document.cookie = `sessionNickname=${response.data.nickname}; path=/`;
+                            document.cookie = `sessionNickname=${response.data.fnickname}; path=/`;
                             document.cookie = `sessionForummemberID=${response.data.forummemberID}; path=/`;
                             // 其他處理，如跳轉頁面
                             console.log('response:', response)

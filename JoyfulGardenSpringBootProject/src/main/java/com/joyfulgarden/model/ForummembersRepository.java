@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ForummembersRepository extends JpaRepository<Forummembers, Integer> {
 
-	Forummembers findByNickname(String nickname);
+	Forummembers findByFnickname(String fnickname);
 
 	
-	Forummembers  findNicknameByForummemberID(Integer forummemberID);
+	Forummembers  findFnicknameByForummemberID(Integer forummemberID);
 
 }

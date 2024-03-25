@@ -56,7 +56,7 @@ public class Comments {
 	//@JsonIgnoreProperties({ "" })
 	@JsonIgnore //但我不知道為何要加這行
 	@ManyToOne
-	@JoinColumn(name = "AUTHORNICKNAME", referencedColumnName = "NICKNAME" , insertable = false, updatable = false)
+	@JoinColumn(name = "AUTHORNICKNAME", referencedColumnName = "FNICKNAME" , insertable = false, updatable = false)
 	private Forummembers forummembers;
 	
 	//@JsonIgnoreProperties({ "" })

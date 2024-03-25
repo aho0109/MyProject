@@ -23,11 +23,11 @@ public class Forummembers {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer forummemberID;
 	
-	@Column(name = "NICKNAME")
-	private String nickname;
+	@Column(name = "FNICKNAME")
+	private String fnickname;
 	
-	@Column(name = "PASSWORD")
-	private String password;
+	@Column(name = "FPASSWORD")
+	private String fpassword;
 	
 	@OneToMany(mappedBy = "forummembers", cascade = CascadeType.ALL)
 	private List<Posts> posts;
@@ -51,7 +51,7 @@ public class Forummembers {
         // 遍歷所有的 forummembers，找到對應的 forummemberID，返回其 nickname
         for (Replies reply : replies) {
             if (reply.getForummembers().getForummemberID().equals(forummemberID)) {
-                return reply.getForummembers().getNickname();
+                return reply.getForummembers().getFnickname();
             }
         }
         // 如果找不到對應的 forummemberID，返回 null 或者 throw Exception，視情況而定
@@ -63,12 +63,12 @@ public class Forummembers {
 		return forummemberID;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public String getFnickname() {
+		return fnickname;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getFpassword() {
+		return fpassword;
 	}
 
 	public List<Posts> getPosts() {
@@ -79,12 +79,12 @@ public class Forummembers {
 		this.forummemberID = forummemberID;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setFnickname(String fnickname) {
+		this.fnickname = fnickname;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setFpassword(String fpassword) {
+		this.fpassword = fpassword;
 	}
 
 	public void setPosts(List<Posts> posts) {

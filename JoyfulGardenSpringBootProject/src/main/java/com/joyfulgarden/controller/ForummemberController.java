@@ -28,7 +28,7 @@ public class ForummemberController {
 
     @PostMapping("/forum/login")
     public ResponseEntity<Forummembers> login(@RequestBody Forummembers forummembers) {
-    	Forummembers loggedMember = forummembersService.login(forummembers.getNickname(), forummembers.getPassword());
+    	Forummembers loggedMember = forummembersService.login(forummembers.getFnickname(), forummembers.getFpassword());
         return ResponseEntity.ok(loggedMember);
     }
     
@@ -43,10 +43,10 @@ public class ForummemberController {
     
     
     @GetMapping("/forum/forummembers/nicknameOf/{forummemberID}")
-    public  ResponseEntity<String> doNicknameByForummemberID(@PathVariable(name = "forummemberID") Integer forummemberID) {
-    	Forummembers forummember = forummembersService.findNicknameByForummemberID(forummemberID);
+    public  ResponseEntity<String> doFnicknameByForummemberID(@PathVariable(name = "forummemberID") Integer forummemberID) {
+    	Forummembers forummember = forummembersService.findFnicknameByForummemberID(forummemberID);
     	if (forummember != null) {
-            return ResponseEntity.ok(forummember.getNickname());
+            return ResponseEntity.ok(forummember.getFnickname());
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -19,7 +19,7 @@ public class ForummembersService {
 
 	public Forummembers register(Forummembers forummembers) {
 		// 檢查帳號是否已存在
-		if (forummemRepos.findByNickname(forummembers.getNickname()) != null) {
+		if (forummemRepos.findByFnickname(forummembers.getFnickname()) != null) {
 			throw new RuntimeException("帳號已存在");
 		}
 		// 其他驗證邏輯可在此處加入
@@ -30,9 +30,9 @@ public class ForummembersService {
 		return forummemRepos.save(forummembers);
 	}
 
-	public Forummembers login(String nickname, String password) {
-		Forummembers forummembers = forummemRepos.findByNickname(nickname);
-		if (forummembers == null || !forummembers.getPassword().equals(password)) {
+	public Forummembers login(String fnickname, String fpassword) {
+		Forummembers forummembers = forummemRepos.findByFnickname(fnickname);
+		if (forummembers == null || !forummembers.getFpassword().equals(fpassword)) {
 			throw new RuntimeException("帳號或密碼錯誤");
 		}
 		// 登入成功，可在此處進行其他相關處理，如產生 token 等
@@ -48,8 +48,8 @@ public class ForummembersService {
 		}
 	}
 	
-	public Forummembers findNicknameByForummemberID(Integer forummemberID) {
-		return forummemRepos.findNicknameByForummemberID(forummemberID);
+	public Forummembers findFnicknameByForummemberID(Integer forummemberID) {
+		return forummemRepos.findFnicknameByForummemberID(forummemberID);
 	}
 
 }
