@@ -9,11 +9,23 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/postAndReplies.css">
+    <link rel="stylesheet" type="text/css" href="css/bar.css">
 
 </head>
 
 <body>
     <div id="app" class="container">
+
+        <nav class="top-nav">
+            <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
+            <a style="text-decoration: none;" href="#about">about</a>
+            <a style="text-decoration: none;" href="#projects">projects</a>
+            <a style="text-decoration: none;" href="#blog">blog</a>
+            <a v-if="loggedIn == false" style="text-decoration: none; cursor: pointer;" href="login.html">登入</a>
+            <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
+        </nav>
+
+
         <div class="row justify-content-between">
             <div class="col-auto">
                 <button class="custom-btn mt-3" @click="goToAllPostPage">回到文章列表</button>
@@ -34,7 +46,7 @@
                     <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
                 </div>
                 <div class="post-time-divider" style="clear: both; font-size: 10px;">
-                    <a v-bind:href="'listPosts.html?authorNickname=' + post.authorNickname">{{post.authorNickname}}</a> 於 {{timeP}} 發表
+                    <a style="text-decoration: none;" v-bind:href="'listPosts.html?authorNickname=' + post.authorNickname">{{post.authorNickname}}</a> 於 {{timeP}} 發表
                 </div>
                 <!-- postContent -->
                 <div style="font-weight: bold; font-size: 30px; color: brown;" v-html="post.postContent"></div>
@@ -42,8 +54,10 @@
                 <div class="comment-group">
                     <div style="overflow: hidden;" class="list-group-item-comment" v-for="comment in postcomments"
                         :key="comment.commentID">
-                        <span style="float: left; font-weight: normal; font-size: 15px; color: black;">{{comment.authorNickname}}  {{ comment.commentContent}}</span>
+                        <span style="float: left; font-weight: normal; font-size: 15px; color: black;">
+                            <a style="text-decoration: none;" v-bind:href="'listPosts.html?authorNickname=' + comment.authorNickname">{{comment.authorNickname}}</a>  {{ comment.commentContent}}</span>
                         <button style="float: right;" class="" @click="deletePostComment(comment.commentID)" v-if="nicknameValue == comment.authorNickname">刪除留言</button>
+                        <div class="reply-time-divider" style="clear: both; font-size: 10px; color: rgb(117, 117, 117);">{{formatDateTime(comment.commentTime)}}</div>
                     </div>
                 </div>
                 
@@ -56,7 +70,7 @@
         
             <!-- replies區 -->
             <div class="reply-section">
-                <div class="reply-group" v-for="reply in replies" :key="reply.replyID">
+                <div class="reply-group" v-for="reply in replies" :key="reply.replyID" :id="reply.replyID">
                     
 
                     <div style="float: left;">(空間)</div>
@@ -65,14 +79,15 @@
                         <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
                     </div>
                     <div class="reply-time-divider" style="clear: both; font-size: 10px;">
-                        <a v-bind:href="'listPosts.html?authorNickname=' + reply.authorNickname">{{reply.authorNickname}}</a> 於 {{formatDateTime(reply.replyTime)}} 發表</div>
+                        <a style="text-decoration: none;" v-bind:href="'listPosts.html?authorNickname=' + reply.authorNickname">{{reply.authorNickname}}</a> 於 {{formatDateTime(reply.replyTime)}} 發表</div>
                     <!-- replyContent -->
                     <div class="list-group-item" style="font-weight: bold;font-size: 30px; color: brown;" v-html="reply.replyContent"></div>
                     
                     <!-- replycomments -->
                     <div class="comment-group">
-                        <div style="font-weight: normal; font-size: 15px; color:black; overflow: hidden;" class="list-group-item-comment"v-for="comment in reply.comments" :key="comment.commentID">
-                            <span style="float: left;">{{ comment.authorNickname }}  {{ comment.commentContent }}</span>
+                        <div style="font-weight: normal; font-size: 15px; color:black; overflow: hidden;" class="list-group-item-comment" v-for="comment in reply.comments" :key="comment.commentID">
+                            <span style="float: left;">
+                                <a style="text-decoration: none;" v-bind:href="'listPosts.html?authorNickname=' + comment.authorNickname">{{comment.authorNickname}}</a>  {{ comment.commentContent }}</span>
                             <button style="float: right;" class="" @click="deleteReplyComment(comment.commentID)" v-if="nicknameValue == comment.authorNickname">刪除留言</button>
                             <div class="reply-time-divider" style="clear: both; font-size: 10px; color: rgb(117, 117, 117);">{{formatDateTime(comment.commentTime)}}</div>
                         </div>
@@ -108,9 +123,15 @@
                     //nicknameOfReplyAuthor: '',
                     nicknameValue: '',
                     commentTime: '',
+                    loggedIn: false,
                 };
             },
             mounted() {
+                const nicknameCookie = this.getCookie('sessionNickname');
+                const forummemberIDCookie = this.getCookie('sessionForummemberID');
+                if (nicknameCookie && forummemberIDCookie) {
+                    this.loggedIn = true;
+                }
                 const postID = getUrlParameter("postID");
                 axios.get(`http://localhost:8085/forum/posts/${postID}`)
                     .then(response01 => {
@@ -135,6 +156,15 @@
                         /*this.replies.forEach(reply => {
                             this.nicknameOfReplyAuthor = this.getNicknameOfReplyAuthor(reply.authorID);
                         });*/
+                        this.$nextTick(() => {
+                            const replyID = getUrlParameter("replyID");
+                            console.log(replyID);
+                            const element = document.getElementById(replyID);
+                            console.log(element);
+                            if (element) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        });
                     });
                 /*axios.get(`/forum/forummembers/${forummemberID}`)
                     .then(response03 => {
@@ -241,7 +271,15 @@
                                 commentID: response.data.commentID, // 假設後端返回了新留言的ID
                                 commentContent: commentContent,
                                 authorNickname: response.data.authorNickname,
-                                commentTime: this.formatDateTime(response.data.commentTime)
+                                commentTime: Date(response.data.commentTime).toLocaleString("zh-TW", {
+                                    year: "numeric",
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                    minute: "2-digit",
+                                    hour: "2-digit",
+                                    second: "2-digit",
+                                    hour12: true
+                                })
                             };
                             const replyIndex = this.replies.findIndex(reply => reply.replyID === replyID);
                             this.replies[replyIndex].comments.push(newComment);
@@ -324,7 +362,22 @@
                         .catch(error => {// 刪除評論失敗後的處理
                             console.error('刪除回覆評論失敗:', error);
                         });
-                }
+                },
+                /*scrollToReply(replyID) {
+                    console.log(document.getElementById(replyID))
+                    
+                },*/
+                getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                },
+                logout() {
+                    // 清除相關的 Cookie
+                    document.cookie = 'sessionNickname=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    document.cookie = 'sessionForummemberID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = "allPosts-google.html"; 
+                },
             }
         });
         app.mount("#app");

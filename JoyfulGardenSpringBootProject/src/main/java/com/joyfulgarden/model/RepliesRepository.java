@@ -8,4 +8,7 @@ public interface RepliesRepository extends JpaRepository<Replies, Integer> {
 
 	List<Replies> findByPostID(Integer postID);
 	
+	// 作者查全
+	public List<Replies> findAllRepliesByAuthorNicknameOrderByReplyIDDesc(String authorNickname);
+	
 }

@@ -10,6 +10,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/postAndReplies.css">
+    <link rel="stylesheet" type="text/css" href="css/listPosts.css">
+    <link rel="stylesheet" type="text/css" href="css/bar.css">
 
 </head>
 
@@ -17,10 +19,18 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!------ Include the above in your HEAD tag ---------->
 
     <div id="app">
-    
+
+        <nav class="top-nav">
+            <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
+            <a style="text-decoration: none;" href="#about">about</a>
+            <a style="text-decoration: none;" href="#projects">projects</a>
+            <a style="text-decoration: none;" href="#blog">blog</a>
+            <a v-if="loggedIn == false" style="text-decoration: none; cursor: pointer;" href="login.html">登入</a>
+            <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
+        </nav>
+
         <section id="tabs" class="project-tab">
             <div class="container">
                 <div class="row">
@@ -28,42 +38,43 @@
                         <nav>
                             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">你的文章</a>
+                                    role="tab" aria-controls="nav-home" aria-selected="true">文章歷程</a>
                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
-                                    role="tab" aria-controls="nav-profile" aria-selected="false">你的回覆</a>
+                                    role="tab" aria-controls="nav-profile" aria-selected="false">回覆歷程</a>
                                 <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact"
-                                    role="tab" aria-controls="nav-contact" aria-selected="false">你的留言</a>
+                                    role="tab" aria-controls="nav-contact" aria-selected="false">留言歷程</a>
                             </div>
                         </nav>
                         <div class="tab-content" id="nav-tabContent">
-    
+
                             <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
                                 aria-labelledby="nav-home-tab">
-    
+
                                 <table class="table" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>文章標題</th>
                                             <th>發表時間</th>
-                                            <th>(人氣)</th>
+                                            <th>(最新)</th>
                                         </tr>
                                     </thead>
-    
+
                                     <tbody>
                                         <tr v-for="post in posts" :key="post.postID">
                                             <td><a style="font-size: 25px; text-decoration: none;"
-                                                v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle
-                                                }}</a></td>
-                                            <td>時間</td>
+                                                    v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{
+                                                    post.postTitle}}</a></td>
+                                            <td>{{formatDateTime(post.postTime)}}</td>
                                             <td>(人數)</td>
                                         </tr>
                                     </tbody>
                                 </table>
-    
+
                             </div>
-    
-    
-                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                aria-labelledby="nav-profile-tab">
                                 <table class="table" cellspacing="0">
                                     <thead>
                                         <tr>
@@ -73,47 +84,40 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><a href="#">post.postTitle</a></td>
-                                            <td>時間</td>
+                                        <tr v-for="reply in replies" :key="reply.replyID">
+                                            <td><a style="font-size: 25px; text-decoration: none;"
+                                                    v-bind:href="'postAndReplies-google.html?postID=' + reply.postID + '&replyID=' + reply.replyID">
+                                                    【RE】{{ reply.postTitle }}</a></td>
+                                            <td>{{formatDateTime(reply.replyTime)}}</td>
                                             <td>(人數)</td>
                                         </tr>
-    
+
                                     </tbody>
                                 </table>
                             </div>
-    
-    
-                            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+
+                            <div class="tab-pane fade" id="nav-contact" role="tabpanel"
+                                aria-labelledby="nav-contact-tab">
                                 <table class="table" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Contest Name</th>
-                                            <th>Date</th>
-                                            <th>Award Position</th>
+                                            <th>留言摘要</th>
+                                            <th>留言日期</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><a href="#">Work 1</a></td>
-                                            <td>Doe</td>
-                                            <td>john@example.com</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="#">Work 2</a></td>
-                                            <td>Moe</td>
-                                            <td>mary@example.com</td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="#">Work 3</a></td>
-                                            <td>Dooley</td>
-                                            <td>july@example.com</td>
+                                        <tr v-for="comment in comments" :key="comment.commentID">
+                                            <td><a style="font-size: 25px; text-decoration: none;"
+                                                v-bind:href="'postAndReplies-google.html?postID=' + comment.postID + '&replyID=' + comment.replyID">
+                                                【RE】{{ shortenContent(comment.commentContent) }}</a></td>
+                                            <td>{{formatDateTime(comment.commentTime)}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-    
-    
+
+
                         </div>
                     </div>
                 </div>
@@ -127,36 +131,90 @@
             data() {
                 return {
                     posts: [],
+                    replies: [],
+                    comments: [],
+                    loggedIn: false,
                 };
             },
             mounted() {
+                const nicknameCookie = this.getCookie('sessionNickname');
+                const forummemberIDCookie = this.getCookie('sessionForummemberID');
+                if (nicknameCookie && forummemberIDCookie) {
+                    this.loggedIn = true;
+                }
                 const authorNickname = getUrlParameter("authorNickname");
                 axios.get(`http://localhost:8085/forum/postsDesc/${authorNickname}`)
-                    .then(response => {
-                        console.log('response:', response);
-                        this.posts = response.data;
+                    .then(responseP => {
+                        console.log('responseP:', responseP);
+                        this.posts = responseP.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching posts:', error);
+                    });
+                axios.get(`http://localhost:8085/forum/repliesDesc/${authorNickname}`)
+                    .then(responseR => {
+                        console.log('responseR:', responseR);
+                        this.replies = responseR.data;
+                        // 在這裡取得每個回覆的標題並存儲在replies中
+                        this.replies.forEach(reply => {
+                            axios.get(`http://localhost:8085/forum/posts/${reply.postID}`)
+                                .then(response => {
+                                    console.log('responsePT:', response);
+                                    reply.postTitle = response.data.postTitle;
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching post title:', error);
+                                });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching replies:', error);
+                    });
+                axios.get(`http://localhost:8085/forum/postandreplyDesc/${authorNickname}`)
+                    .then(responseC => {
+                        console.log('responseC:', responseC);
+                        this.comments = responseC.data;
                     })
                     .catch(error => {
                         console.error('Error fetching posts:', error);
                     });
             },
             methods: {
-                /*getCookieValue(cookieName) {
-                    // 獲取所有的 Cookie (所謂一個是: sessionNickname=Yoro)
-                    var cookies = document.cookie.split(';');
-                    // 遍歷每個 Cookie
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = cookies[i].trim();
-                        // 如果找到了目標名稱的 Cookie 
-                        if (cookie.startsWith(cookieName + '=')) {
-                            return cookie.substring(cookieName.length + 1);// 提取並返回該 Cookie 的值
-                        }
+                formatDateTime(xxx) {
+                    var formattedDateTime = new Date(xxx).toLocaleString("zh-TW", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        minute: "2-digit",
+                        hour: "2-digit",
+                        second: "2-digit",
+                        hour12: true
+                    });
+                    return formattedDateTime;
+                },
+                shortenContent(shortcont) {
+                    // 移除 <p> 標籤
+                    let plainText = shortcont.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+                    // 截斷內容
+                    if (plainText.length > 10) {
+                        return plainText.substring(0, 10) + '...';
+                    } else {
+                        return plainText + '...';
                     }
-                    return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
-                }*/
+                },
+                getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                },
+                logout() {
+                    // 清除相關的 Cookie
+                    document.cookie = 'sessionNickname=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    document.cookie = 'sessionForummemberID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = "allPosts-google.html"; 
+                },
             }
         });
-
         app.mount("#app");
 
         function getUrlParameter(name) {
@@ -165,6 +223,8 @@
             const results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
+
+        
 
 
     </script>

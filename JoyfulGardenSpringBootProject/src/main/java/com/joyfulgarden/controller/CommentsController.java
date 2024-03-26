@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.joyfulgarden.model.Comments;
+import com.joyfulgarden.model.Replies;
 import com.joyfulgarden.service.CommentsService;
 
 @RestController
@@ -40,6 +41,12 @@ public class CommentsController {
 	public List<Comments> doAllCommentsByPost(String targetType, Integer postID, Integer replyID) {
 		return commentsService.findByTargetTypeAndID(targetType, postID, replyID);
 		//return commentsService.findByTargetTypeAndID("Posts", 1, null);
+	}
+	
+	// 作者查全
+	@GetMapping("/forum/postandreplyDesc/{authorNickname}")
+	public List<Comments> doAllCommentsByAuthorNicknameDesc(@PathVariable(name = "authorNickname")String authorNickname) {
+		return commentsService.findAllCommentsByAuthorNicknameOrderByCommentIDDesc(authorNickname);
 	}
 	
 	// 新增

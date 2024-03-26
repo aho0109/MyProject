@@ -54,4 +54,9 @@ public class RepliesService {
 	public List<Replies> findAllRepliesByPostsID(Integer postID) {
 		return repRepos.findByPostID(postID);
 	}
+	
+	// 作者查全
+	public List<Replies> findAllRepliesByAuthorNicknameOrderByReplyIDDesc(String authorNickname) {
+		return repRepos.findAllRepliesByAuthorNicknameOrderByReplyIDDesc(authorNickname);
+	}
 }

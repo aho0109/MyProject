@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.joyfulgarden.model.Posts;
 import com.joyfulgarden.model.Replies;
 import com.joyfulgarden.service.RepliesService;
 
@@ -43,6 +44,14 @@ public class RepliesController {
 	public List<Replies> doAllRepliesByPostID(@PathVariable(name = "postID") Integer postID) {
 		return repliesService.findAllRepliesByPostsID(postID);
 	}
+	
+	// 作者查全
+	@GetMapping("/forum/repliesDesc/{authorNickname}")
+	public List<Replies> doAllRepliesByAuthorNicknameDesc(@PathVariable(name = "authorNickname")String authorNickname) {
+		return repliesService.findAllRepliesByAuthorNicknameOrderByReplyIDDesc(authorNickname);
+	}
+	
+	
 	
 	// 新增o
 	@PostMapping("/forum/post={postID}/replies")

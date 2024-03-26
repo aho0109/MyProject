@@ -52,6 +52,11 @@ public class CommentsService {
 		return comRepos.findByTargetTypeAndPostIDAndReplyID(targetType, postID, replyID);
 	}
 	
+	//作者全
+	public List<Comments> findAllCommentsByAuthorNicknameOrderByCommentIDDesc(String authorNickname) {
+		return comRepos.findAllCommentsByAuthorNicknameOrderByCommentIDDesc(authorNickname);
+	}
+	
 //	//找全by replyID
 //	public List<Comments> findByTargetTypeAndReplyID(String targetType, Integer replyID) {
 //		return comRepos.findByTargetTypeAndReplyID(targetType, replyID);
