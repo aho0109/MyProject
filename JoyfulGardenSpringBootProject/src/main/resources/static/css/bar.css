@@ -29,7 +29,12 @@ header {
     justify-content: flex-end;
     align-items: center;
     background: #afd7da;
-    transition: all 0.3s;
+    z-index: 9999; /* 確保在最上層顯示 */
+    transition: top 0.3s; /* 添加過渡效果 */
+    /*transition: all 0.3s;*/
+}
+.hidden {
+    top: -100px; /* 隱藏導航欄 */
 }
 
 .top-nav a {
@@ -51,3 +56,5 @@ a.home {
 .nav-up {
     top: -70px;
 }
+
+

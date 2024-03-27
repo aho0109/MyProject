@@ -1,5 +1,6 @@
 package com.joyfulgarden.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,10 @@ public class PostsService {
 	public List<Posts> findAllPostsDesc() {
 		return poRepos.findAllByOrderByPostIDDesc();
 	}
+	
+	public List<Posts> findAllByLastActivityDesc() {
+		return poRepos.findAllOrderByLastActivityDesc();
+	};
 	
 	// 找by sboardID
 	public List<Posts> findAllPostsBySboardID(Integer sboardID) {

@@ -16,7 +16,7 @@
 <body>
     <div id="app" class="container">
         <!--<h1>花壇</h1>-->
-        <nav class="top-nav">
+        <nav class="top-nav" :class="{ 'hidden': isNavHidden }">
             <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
             <a style="text-decoration: none;" href="#about">about</a>
             <a style="text-decoration: none;" href="#projects">projects</a>
@@ -25,7 +25,9 @@
             <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
         </nav>
 
-        <button class="custom-btn mt-3" @click="goToCreatePostPage">發表文章</button>
+        <div  style="margin-top: 50px;">
+            <button class="custom-btn mt-3" @click="goToCreatePostPage">發表文章</button>
+        </div>
         <div class="input-group mt-3">
             <input type="text" class="form-control" placeholder="輸入搜尋內容" v-model="keyword">
             <!--<select class="form-select" v-model="selectedSboard">
@@ -51,6 +53,13 @@
             <button class="custom-btn mt-3" @click="filterPostsBySboard(6)">廠商宣傳</button>
             <button class="custom-btn mt-3" @click="filterPostsBySboard(7)">栽種相關</button>
             <button class="custom-btn mt-3" @click="filterPostsBySboard(8)">工具相關</button>
+        </div>
+        <div class="input-group mt-3">
+            <select class="form-select" v-model="sortOption" @change="sortPosts()">
+                <option value="latestActivity">依最新動態排序</option>
+                <option value="normalDesc">依文章發表排序</option>
+                <!-- 添加其他排序選項 -->
+            </select>
         </div>
 
 
@@ -117,6 +126,7 @@
         const app = Vue.createApp({
             data() {
                 return {
+                    isNavHidden: false, // 初始化為 false，顯示導航bar欄
                     posts: [],
                     keyword: '',
                     selectedSboard: '',
@@ -127,9 +137,11 @@
                     //forummemberIDValue: ''//後來改成認nickname
                     nicknameValue: '',
                     loggedIn: false,
+                    sortOption: '選擇排序',
                 };
             },
             mounted() {
+                window.addEventListener('scroll', this.handleScroll); // 監聽頁面的滾動事件
                 const nicknameCookie = this.getCookie('sessionNickname');
                 const forummemberIDCookie = this.getCookie('sessionForummemberID');
                 if (nicknameCookie && forummemberIDCookie) {
@@ -138,6 +150,7 @@
                 axios.get("http://localhost:8085/forum/postsDesc")
                     .then(response => {
                         this.posts = response.data;
+                        console.log(response.data)
                         //test01 = response.data[18].postContent;
                         //console.log(response.data[18].postContent);
                         this.extractImageURL(1); // 在資料加載後執行提取圖片的方法
@@ -149,7 +162,6 @@
                         var forummemberIDValue = this.getCookieValue('sessionForummemberID')//後來改成認nickname
                         console.log('Nickname:', this.nicknameValue);
                         console.log('ForummemberID:', forummemberIDValue);
-
                         //console.log('ForummemberID:', forummemberIDValue); //因為我要在上面用到forummemberIDValue，所以一開始要在data區先初始化，所以這行會是空而報錯，須改成下面那行才能顯示
                         //console.log('ForummemberID:', this.forummemberIDValue);
                     })
@@ -157,7 +169,16 @@
                         console.error('Error fetching posts:', error);
                     });
             },
+            beforeUnmount() {
+                // 在組件卸載前，移除滾動事件監聽器，以防止內存洩漏
+                window.removeEventListener('scroll', this.handleScroll);
+            },
             methods: {
+                handleScroll() { // 監聽滾動事件的方法
+                    const scrollY = window.scrollY; // 獲取頁面的垂直滾動距離
+                    // 如果滾動距離超過某個閾值，則隱藏導航欄，否則顯示導航欄
+                    this.isNavHidden = scrollY > 80; // 這裡的閾值可以根據實際情況調整
+                },
                 goToAllPosts() {
                     window.location.href = "allPosts-google.html"
                 },
@@ -205,6 +226,24 @@
                             this.extractImageURL(1); // 在資料加載後執行提取圖片的方法
                             //window.location.href = `allPosts-google.html?sboardID=${sboardID}`
                         });
+                },
+                doAllPostsByLastActivity() {
+                    axios.get("http://localhost:8085/forum/postsLatestDesc")
+                        .then(responseLA => {
+                            console.log(responseLA)
+                            this.posts = responseLA.data;
+                            this.extractImageURL(1); // 在資料加載後執行提取圖片的方法
+                        })
+                        .catch(errorLA => {
+                            console.error('最新動態排序錯誤:', errorLA);
+                        });
+                },
+                sortPosts() { // 定義方法，根據所選擇的排序選項來排序文章
+                    if (this.sortOption === 'latestActivity') {
+                        this.doAllPostsByLastActivity();
+                    } else if (this.sortOption === 'normalDesc') {
+                        this.goToAllPosts();
+                    }
                 },
                 doSearchPosts() {
                     axios.get(`http://localhost:8085/forum/search/${this.keyword}`)

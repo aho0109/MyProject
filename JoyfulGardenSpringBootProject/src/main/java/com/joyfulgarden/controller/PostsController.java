@@ -68,6 +68,12 @@ public class PostsController {
 		return postsService.findAllPostsDesc();
 	}
 	
+	//找全由新動態
+	@GetMapping("/forum/postsLatestDesc")
+	public List<Posts> doAllPostsByLastActivityDesc() {
+		return postsService.findAllByLastActivityDesc();
+	}
+	
 	// 作者查全
 	@GetMapping("/forum/postsDesc/{authorNickname}")
 	public List<Posts> doAllPostsByAuthorNicknameDesc(@PathVariable(name = "authorNickname")String authorNickname) {

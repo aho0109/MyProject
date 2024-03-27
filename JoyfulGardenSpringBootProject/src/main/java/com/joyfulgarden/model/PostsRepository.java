@@ -1,5 +1,6 @@
 package com.joyfulgarden.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,19 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	//查全by sboardID由新到舊
 	public List<Posts> findBySboardIDOrderByPostIDDesc(Integer sboardID);
 	
+	// 最新動態排列
+	// 使用 MAX(REPLYTIME) AS LastActivityTime 和 MAX(COMMENTTIME) AS LastActivityTime，這樣合成的暫時表中就會有一個名為 LastActivityTime 的欄位。然後，我們在主查詢中使用這個合成的欄位名稱來排序。
+	@Query(value = "SELECT p.* " +
+            "FROM Posts p " +
+            "LEFT JOIN (SELECT POSTID, MAX(LastActivityTime) AS LastActivityTime " +
+            "           FROM (SELECT POSTID, MAX(REPLYTIME) AS LastActivityTime FROM Replies GROUP BY POSTID " +
+            "                 UNION ALL " +
+            "                 SELECT POSTID, MAX(COMMENTTIME) AS LastActivityTime FROM Comments GROUP BY POSTID) AS Activity " +
+            "           GROUP BY POSTID) AS Activity ON p.POSTID = Activity.POSTID " +
+            "ORDER BY COALESCE(Activity.LastActivityTime, p.POSTTIME) DESC",
+    nativeQuery = true)
+	List<Posts> findAllOrderByLastActivityDesc();
+	
 	//查詢標題like
 	public List<Posts> findByPostTitleContaining(String xxxtitle);
 	
@@ -34,7 +48,7 @@ public interface PostsRepository extends JpaRepository<Posts, Integer> {
 	
 	 
 	// 關鍵字模糊搜尋
-	// 但目前bug:文章刪了但 回覆沒刪或留言沒刪 找的時候還是會跑出來 點進去就消失
+	// (已解決)bug:文章刪了但 回覆沒刪或留言沒刪 找的時候還是會跑出來 點進去就消失
 	@Query(value = "SELECT p.postID AS postID, p.postTitle AS postTitle, p.postContent AS postContent, " +
             "p.authorNickname AS authorNickname, p.sboardID AS sboardID, p.likesCount AS likesCount, " +
             "p.postTime AS postTime, p.isDeleted AS isDeleted " +

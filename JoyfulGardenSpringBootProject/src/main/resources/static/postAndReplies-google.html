@@ -16,7 +16,7 @@
 <body>
     <div id="app" class="container">
 
-        <nav class="top-nav">
+        <nav class="top-nav" :class="{ 'hidden': isNavHidden }">
             <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
             <a style="text-decoration: none;" href="#about">about</a>
             <a style="text-decoration: none;" href="#projects">projects</a>
@@ -26,7 +26,7 @@
         </nav>
 
 
-        <div class="row justify-content-between">
+        <div class="row justify-content-between" style="margin-top: 50px;">
             <div class="col-auto">
                 <button class="custom-btn mt-3" @click="goToAllPostPage">回到文章列表</button>
             </div>
@@ -112,6 +112,7 @@
         const app = Vue.createApp({
             data() {
                 return {
+                    isNavHidden: false, // 初始化為 false，顯示導航bar欄
                     post: [],
                     postcomments: [],
                     replies: [],
@@ -127,6 +128,7 @@
                 };
             },
             mounted() {
+                window.addEventListener('scroll', this.handleScroll); // 監聽頁面的滾動事件
                 const nicknameCookie = this.getCookie('sessionNickname');
                 const forummemberIDCookie = this.getCookie('sessionForummemberID');
                 if (nicknameCookie && forummemberIDCookie) {
@@ -212,6 +214,11 @@
                         }
                     }
                     return '';// 如果未找到對應的 Cookie，返回空字符串或者其他指定的值
+                },
+                handleScroll() { // 監聽滾動事件的方法
+                    const scrollY = window.scrollY; // 獲取頁面的垂直滾動距離
+                    // 如果滾動距離超過某個閾值，則隱藏導航欄，否則顯示導航欄
+                    this.isNavHidden = scrollY > 80; // 這裡的閾值可以根據實際情況調整
                 },
                 goToAllPostPage() {
                     window.location.href = "allPosts-google.html"; // 更改為你的發表文章頁面的URL
