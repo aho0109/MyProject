@@ -18,15 +18,14 @@
         <!--<h1>花壇</h1>-->
         <nav class="top-nav" :class="{ 'hidden': isNavHidden }">
             <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
-            <a style="text-decoration: none;" href="#about">about</a>
-            <a style="text-decoration: none;" href="#projects">projects</a>
-            <a style="text-decoration: none;" href="#blog">blog</a>
+            <a style="text-decoration: none;">{{this.nicknameValue}}</a>
             <a v-if="loggedIn == false" style="text-decoration: none; cursor: pointer;" href="login.html">登入</a>
             <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
         </nav>
 
         <div  style="margin-top: 50px;">
-            <button class="custom-btn mt-3" @click="goToCreatePostPage">發表文章</button>
+            <button v-if="loggedIn == false" class="custom-btn mt-3" @click="goToLogin">登入以發表</button>
+            <button v-if="loggedIn == true" class="custom-btn mt-3" @click="goToCreatePostPage">發表文章</button>
         </div>
         <div class="input-group mt-3">
             <input type="text" class="form-control" placeholder="輸入搜尋內容" v-model="keyword">
@@ -41,7 +40,7 @@
                 <option value="7">栽種相關</option>
                 <option value="8">工具相關</option>
             </select>-->
-            <button class="btn btn-outline-secondary" type="button" @click="doSearchPosts">搜尋</button>
+            <button class="btn btn-outline-secondary" type="button" style="background-color: 97A5C0;" @click="doSearchPosts">搜尋</button>
         </div>
         <div>
             <button class="custom-btn mt-3" @click="goToAllPosts">所有文章</button>
@@ -57,7 +56,7 @@
         <div class="input-group mt-3">
             <select class="form-select" v-model="sortOption" @change="sortPosts()">
                 <option value="latestActivity">依最新動態排序</option>
-                <option value="normalDesc">依文章發表排序</option>
+                <option value="normalDesc">依最新文章排序</option>
                 <!-- 添加其他排序選項 -->
             </select>
         </div>
@@ -75,7 +74,7 @@
         </ul>
 -->
         
-        <table class="table">
+        <!--<table class="table">
             <thead class="table-header">
                 <tr>
                     <th scope="col">預覽</th>
@@ -83,20 +82,17 @@
                     <th scope="col">操作</th>
                 </tr>
             </thead>
-            <tbody class="table-body">
-                <tr v-for="post in posts" :key="post.postID" >
-                    <td style="width: 150px;">
+            <tbody class="table-body" style="height: 110px;">
+                <tr v-for="post in posts" :key="post.postID">
+                    <td style="width: 110px; height: 110px;">
                         <div>
-                            <!--<div  v-html="post.postContent" alt="圖片" style="width: 150px;">-->
-                            <img v-if="post.postImageURL" :src="post.postImageURL" alt="圖片" style="width: 100%;">
-                            <img v-else src="image/defult img02.png" alt="預設圖片" style="width: 100%;">
+                            <img v-if="post.postImageURL" :src="post.postImageURL" alt="圖片" style="width: 100%; height: auto;">
+                            <img v-else src="image/defult img02.png" alt="預設圖片" style="width: 100%; height: auto;">
                         </div>
                     </td>
                     <td>
                         <div>
-                            <a style="font-size: 25px; text-decoration: none;"
-                                v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle
-                                }}</a>
+                            <a style="font-size: 25px; text-decoration: none;" v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle }}</a>
                         </div>
                         <div>
                             <span v-html="shortenContent(post.postContent)"></span>
@@ -105,18 +101,50 @@
                     <td style="width: 150px;">
                         <div v-if="nicknameValue == post.authorNickname">
                             <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
-                            <button style="font-size: 15px;" class=""
-                                @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                            <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
                         </div>
-                        <!--<div v-if="loginStaus == null">
-                            <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">AAAAAAA刪除文章</button>
-                            <button style="font-size: 15px;" class=""
-                                @click="goToUpdatePostPage(post.postID)">AAAAAAA編輯文章</button>
-                        </div>-->
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table>-->
+        <table class="table">
+    <thead class="table-header">
+        <tr>
+            <th scope="col">預覽</th>
+            <th scope="col">標題</th>
+            <th scope="col">操作</th>
+        </tr>
+    </thead>
+    <tbody class="table-body" style="height: 110px;">
+        <tr v-for="post in posts" :key="post.postID">
+            <td style="width: 110px; height: 110px; text-align: center;">
+                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                    <div>
+                        <img v-if="post.postImageURL" :src="post.postImageURL" alt="圖片" style="max-width: 100%; max-height: 100%;">
+                        <img v-else src="image/defult img02.png" alt="預設圖片" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <a style="font-size: 25px; text-decoration: none;" v-bind:href="'postAndReplies-google.html?postID=' + post.postID">{{ post.postTitle }}</a>
+                </div>
+                <div>
+                    <span v-html="shortenContent(post.postContent)"></span>
+                </div>
+            </td>
+            <td style="width: 150px;">
+                <div v-if="nicknameValue == post.authorNickname">
+                    <button style="font-size: 15px;" class="" @click="deletePost(post.postID)">刪除文章</button>
+                    <button style="font-size: 15px;" class="" @click="goToUpdatePostPage(post.postID)">編輯文章</button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
 
     </div>
 
@@ -179,6 +207,9 @@
                     // 如果滾動距離超過某個閾值，則隱藏導航欄，否則顯示導航欄
                     this.isNavHidden = scrollY > 80; // 這裡的閾值可以根據實際情況調整
                 },
+                goToLogin() {
+                    window.location.href = "login.html"
+                },
                 goToAllPosts() {
                     window.location.href = "allPosts-google.html"
                 },
@@ -236,6 +267,17 @@
                         })
                         .catch(errorLA => {
                             console.error('最新動態排序錯誤:', errorLA);
+                        });
+                },
+                doAllPostsDesc() {
+                    axios.get("http://localhost:8085/forum/postsDesc")
+                        .then(responseAD => {
+                            console.log(responseAD)
+                            this.posts = responseAD.data;
+                            this.extractImageURL(1); // 在資料加載後執行提取圖片的方法
+                        })
+                        .catch(errorAD => {
+                            console.error('最新動態排序錯誤:', errorAD);
                         });
                 },
                 sortPosts() { // 定義方法，根據所選擇的排序選項來排序文章

@@ -39,6 +39,12 @@ public class RepliesController {
 		return repliesService.findById(replyID);
 	}
 	
+	// 找全o
+	@GetMapping("/forum/replies")
+	public List<Replies> doAllPosts() {
+		return repliesService.findAllReplies();
+	}
+	
 	// 找全by postID
 	@GetMapping("/forum/post={postID}/replies")
 	public List<Replies> doAllRepliesByPostID(@PathVariable(name = "postID") Integer postID) {

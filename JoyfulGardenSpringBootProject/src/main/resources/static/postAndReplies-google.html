@@ -18,9 +18,7 @@
 
         <nav class="top-nav" :class="{ 'hidden': isNavHidden }">
             <a style="text-decoration: none; font-size: 70px;" href="allPosts-google.html" class="home">花壇</a>
-            <a style="text-decoration: none;" href="#about">about</a>
-            <a style="text-decoration: none;" href="#projects">projects</a>
-            <a style="text-decoration: none;" href="#blog">blog</a>
+            <a style="text-decoration: none;">{{this.nicknameValue}}</a>
             <a v-if="loggedIn == false" style="text-decoration: none; cursor: pointer;" href="login.html">登入</a>
             <a v-if="loggedIn == true" style="text-decoration: none; cursor: pointer;" @click="logout">登出</a>
         </nav>
@@ -31,7 +29,8 @@
                 <button class="custom-btn mt-3" @click="goToAllPostPage">回到文章列表</button>
             </div>
             <div class="col-auto">
-                <button class="custom-btn mt-3" @click="goToCreateReplyPage">發表回覆</button>
+                <button v-if="loggedIn == false" class="custom-btn mt-3" @click="goToLogin">登入以回覆</button>
+                <button v-if="loggedIn == true" class="custom-btn mt-3" @click="goToCreateReplyPage">發表回覆</button>
             </div>
         </div>
 
@@ -62,7 +61,7 @@
                 </div>
                 
                 <!--對文章進行留言-->
-                <div class="input-group mt-2">
+                <div v-if="loggedIn == true" class="input-group mt-2">
                     <input type="text" class="form-control custom-input" placeholder="輸入你的留言"v-model="newPostCommentText[post.postID]">
                     <button class="custom-btn" @click="addPostComment(post.postID)">送出</button>
                 </div>
@@ -73,7 +72,7 @@
                 <div class="reply-group" v-for="reply in replies" :key="reply.replyID" :id="reply.replyID">
                     
 
-                    <div style="float: left;">(空間)</div>
+                    <div style="float: left;">【RE】</div>
                     <div style="float: right;" v-if="nicknameValue == reply.authorNickname">
                         <button style="font-size: 15px;" class="" @click="deleteReply(reply.replyID)">刪除回覆</button>
                         <button style="font-size: 15px;" class="" @click="goToUpdateReplyPage(reply.replyID)">編輯回覆</button>
@@ -93,7 +92,7 @@
                         </div>
                     </div>
                     <!--對回覆進行留言-->
-                    <div class="input-group mt-2">
+                    <div v-if="loggedIn == true" class="input-group mt-2">
                         <input type="text" class="form-control custom-input" placeholder="輸入你的留言" v-model="newReplyCommentText[reply.replyID]">
                         <button class="custom-btn" @click="addReplyComment(reply.replyID)">送出</button>
                     </div>
@@ -174,6 +173,9 @@
                     });*/
             },
             methods: {
+                goToLogin() {
+                    window.location.href = "login.html"
+                },
                 formatDateTime(xxx) {
                     var formattedDateTime = new Date(xxx).toLocaleString("zh-TW", {
                         year: "numeric",
